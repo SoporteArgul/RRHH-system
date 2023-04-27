@@ -6,14 +6,7 @@ import moment from "moment-timezone";
 import tarea2 from"../scripts/jornal.script"
 export class MongoRepository implements EmpleadoRepository{
     
-    async findUserById(uuid:string):Promise<any>{
-        try{
-            const user= await EmpleadoModel.findOne({uuid});
-            return user
-        }catch(e){
-            console.log("Error de repositorio")
-        }
-    }
+
     async registerUser(userIn:EmpleadoEntity):Promise<any>{
         try{
             const user= await EmpleadoModel.create(userIn)
@@ -26,6 +19,14 @@ export class MongoRepository implements EmpleadoRepository{
             console.log("Error de repositorio")
         }
     }
+    async login(email:string):Promise<any>{
+        try{
+            const user= await EmpleadoModel.findOne({email})
+            return user
+        }catch(e){
+            console.log("Error de repositorio")
+        }
+    }
     async listUser():Promise<any>{
         try{
             const user=await EmpleadoModel.find()
@@ -33,6 +34,25 @@ export class MongoRepository implements EmpleadoRepository{
         }catch(e){
             console.log("Error de repositorio")
         }
+    }
+    async sendMail(): Promise<any> {
+    }
+    async listByGroup(data:string): Promise<any> {
+        try{
+            const user=await EmpleadoModel.find({grupo:data});
+            return user
+        }catch(e){
+            throw Error("Error de repositorio")
+        }
+    }
+    async listByArea(): Promise<any> {
+        
+    }
+    async listByRotation(): Promise<any> {
+        
+    }
+    async listBySearch(): Promise<any> {
+        
     }
     async updateUser(id:string,update:EmpleadoEntity):Promise<any>{
         try{
@@ -50,14 +70,7 @@ export class MongoRepository implements EmpleadoRepository{
             console.log("Error de repositorio")
         }
     }
-    async login(email:string):Promise<any>{
-        try{
-            const user= await EmpleadoModel.findOne({email})
-            return user
-        }catch(e){
-            console.log("Error de repositorio")
-        }
-    }
+    
    
     async clockingUser(empleadoId:string,data:Array<string>): Promise<any> {
         try{
@@ -65,48 +78,117 @@ export class MongoRepository implements EmpleadoRepository{
             moment.tz.setDefault('America/Argentina/Buenos_Aires');
             empleadoId=empleadoId.toString();
             const fechaActual=moment().format('l').toString();
-            const horaActual = moment().format('LTS')
+            const horaActual = "18:10:15"
             const horaActualDate = moment(horaActual, 'LTS').toDate();
-            const empleado=await EmpleadoModel.findById(empleadoId); //buscamos el empleado que queremos modificar
+            let jornadas=null
+            const empleado=await EmpleadoModel.findOne({_id:empleadoId}); //buscamos el empleado que queremos modificar
+            const hora_salida_mañana="14:00:00"
+            const hora_entrada_mañana="05:10:00"
             if (empleado) {//verificamos que este el empleado
-                const jornadas = empleado.jornada.find((j) => moment(j.fecha).format('l') === fechaActual) // Buscar una jornada correspondiente a la fecha actual
-                if (jornadas&& data[0] == "jornada") {//chequeamos que la jornada exista
-                  if (data[1]=="entrada"){ //modificamos la jornada actual
-                    jornadas.entrada = horaActualDate;
-                    //utilizamos markmodified para modificar el modelo
-                    empleado.markModified('jornada');
-                    const resultado = await empleado.save();
-                    return resultado;
-                  };
-                  if (data[1]=="salida"){
-                    jornadas.salida = horaActualDate;
-                    empleado.markModified('jornada');
-                    const resultado = await empleado.save();
-                    return resultado;
-                  };
-                  
-                }else{
-                    if (jornadas&& data[0] == "extra") {//chequeamos que la jornada exista
-                        if (data[1]=="entrada"){ //modificamos la jornada actual
-                          jornadas.entrada_horas_extra = horaActualDate;
-                          //utilizamos markmodified para modificar el modelo
-                          empleado.markModified('jornada');
-                          const resultado = await empleado.save();
-                          return resultado;
-                        };
-                        if (data[1]=="salida"){
-                          jornadas.salida_horas_extra = horaActualDate;
-                          empleado.markModified('jornada');
-                          const resultado = await empleado.save();
-                          return resultado;
-                        };
-                    }else{
-                        throw new Error("No se ha registrado la fichada")
+               
+                for (const jornada of empleado.jornada) {
+                    jornadas = jornada.flat().find((j) => moment(j.fecha).format('l') === fechaActual);
+                };
+                if (jornadas){
+                //ENTRADA
+                //verificamos si no existe una entrada y luego nos fijamos que el horario sea menor
+                if (jornadas.entrada==null){
+                    console.log("entre")
+                    if (empleado.turno =="mañana" && (horaActual>="05:00:00" && horaActual<="06:06:00")){
+                        jornadas.entrada=horaActualDate
+                        empleado.markModified('jornada')
+                        const resultado=await empleado.save()
+                        return resultado;
+                    }
+                    if (empleado.turno =="tarde"&& (horaActual>="13:00:00" && horaActual<="14:06:00")){
+                        jornadas.entrada=horaActualDate
+                        empleado.markModified('jornada')
+                        const resultado=await empleado.save()
+                        return resultado
+                    }
+                    if (empleado.turno =="noche"&& (horaActual>="21:00:00"&& horaActual<="22:05:00")){
+                        jornadas.entrada=horaActualDate
+                        empleado.markModified('jornada')
+                        const resultado=await empleado.save()
+                        return resultado
+                    }
+                };
+
+                //SALIDA
+                //verificamos los ragos horarios y luego fijamos el horario de salida
+                if (jornadas.entrada != null && jornadas.salida==null){
+                    if (empleado.turno=="mañana" && (horaActual>="14:00:00" && horaActual<="14:45:00")){
+                        jornadas.salida=horaActualDate
+                        empleado.markModified('jornada')
+                        const resultado=await empleado.save()
+                        return resultado
+                    }
+                    if (empleado.turno=="tarde" && (horaActual>="22:00:00" && horaActual<="22:45:00")){
+                        jornadas.salida=horaActualDate
+                        empleado.markModified('jornada')
+                        const resultado=await empleado.save()
+                        return resultado
+                    }
+                    if (empleado.turno=="noche" && (horaActual>="06:00:00" && horaActual<="06:45:00")){
+                        jornadas.salida=horaActualDate
+                        empleado.markModified('jornada')
+                        const resultado=await empleado.save()
+                        return resultado
                     }
                 }
-            }else{
-                console.log("No se encontró el empleado con el ID proporcionado");
-            }
+
+
+                //HORAS EXTRA ENTRADA
+                if((jornadas.entrada && jornadas.salida) && jornadas.habilitado_horas_extra && jornadas.entrada_horas_extra==null && empleado.turno=="mañana" ){
+
+                    if (horaActual>="14:00" && horaActual<="14:20" ){
+                        jornadas.entrada_horas_extra=horaActualDate
+                        empleado.markModified('jornada')
+                        const resultado=await empleado.save()
+                        return resultado
+                    }}
+
+                if((!jornadas.entrada&&!jornadas.salida) && jornadas.habilitado_horas_extra && (empleado.turno=="noche"||empleado.turno=="tarde")){
+              
+                    if (empleado.turno=="tarde" && ( horaActual>="9:45" && horaActual<= "13:05" )){
+                        jornadas.entrada_horas_extra=horaActualDate
+                        empleado.markModified('jornada')
+                        const resultado=await empleado.save()
+                        return resultado
+                    }
+                    if(empleado.turno=="noche" && (horaActual>="17:45" && horaActual <= "21:05" )){
+                        jornadas.entrada_horas_extra=horaActualDate
+                        empleado.markModified('jornada')
+                        const resultado=await empleado.save()
+                        return resultado 
+                    }
+                }
+                //HORAS EXTRA SALIDA
+
+
+                if (jornadas.habilitado_horas_extra && jornadas.entrada_horas_extra &&  jornadas.salida_horas_extra==null){
+                   
+                    if(empleado.turno=="tarde"&& (horaActual>="11:00" && horaActual<="14:45") ){
+                        jornadas.salida_horas_extra=horaActualDate
+                        empleado.markModified("jornada")
+                        const resultado=await empleado.save()
+                        return resultado
+                    }
+                    if(empleado.turno=="mañana"&& (horaActual>="13:00" && horaActual<="18:45")){
+                        jornadas.salida_horas_extra=horaActualDate
+                        empleado.markModified("jornada")
+                        const resultado=await empleado.save()
+                        return resultado
+                    }
+                    if(empleado.turno=="noche"&& horaActual<="22:45"){
+                        jornadas.salida_horas_extra=horaActualDate
+                        empleado.markModified("jornada")
+                        const resultado=await empleado.save()
+                        return resultado
+                    }
+
+                }
+                }}
     
         }catch(e){
             console.log(e)
@@ -115,47 +197,7 @@ export class MongoRepository implements EmpleadoRepository{
         
     }
 
-    async clockingUserExtra(_id:string,data:Array<string>): Promise<any> {
-        try{
 
-        
-            const fechaActual=moment().format('l').toString();
-            const horaActual = moment().format('LTS')
-            const horaActualDate = moment(horaActual, 'LTS').toDate();
-            //buscamos el empleado que queremos modificar
-            const empleado=await EmpleadoModel.findById({_id});
-            //verificamos que este el empleado
-            if (empleado) {
-                // Buscar una jornada correspondiente a la fecha actual
-                const jornadas = empleado.jornada.find((j) => moment(j.fecha).format('l') === fechaActual);
-                console.log(jornadas)
-                //chequeamos que la jornada exista
-                if (jornadas && jornadas.habilitado_horas_extra==true) {
-                  //modificamos la jornada actual
-                  if (data[0]=="entrada"){
-                    jornadas.entrada_horas_extra = horaActualDate;
-                    //utilizamos markmodified para modificar el modelo
-                    empleado.markModified('jornada');
-                    const resultado = await empleado.save();
-                    return resultado;
-                }
-                  if (data[0]=="salida"){
-                    jornadas.salida_horas_extra = horaActualDate;
-                    empleado.markModified('jornada');
-                    const resultado = await empleado.save();
-                    return resultado;
-                  }
-                } else {
-                  throw new Error('No se pudo actualizar')
-                }  
-            }else{
-                console.log("No se encontró el empleado con el ID proporcionado");
-            }
-    
-        }catch(e){
-            console.log(e)
-            console.log("Error de repositorio")
-        }}
 
     async updateExtraHours(id: string, data:Array<Date|string>): Promise<any> {
         try{
@@ -164,21 +206,25 @@ export class MongoRepository implements EmpleadoRepository{
             const e=moment(data[2]).toDate()
             const s=moment(data[3]).toDate()
             const empleado=await EmpleadoModel.findOne({_id:id})
+            let jornadas=null
             //verificamos que exista empleado y que estemos recibiendo la data a actualizar
             if (empleado && data){
                 //buscamos el la jornada que queremos cargar, si existe entra y modifica 
                 //sino nos va a lanzar un error
-                const jornada = empleado.jornada.find((dia) => moment(dia.fecha).isSame(moment(data[1]), 'day'))
-                if (jornada && data[0]=="normal"&& (e instanceof Date && s instanceof Date != null) ){
-                    jornada.entrada=e;
-                    jornada.salida=s;
+                for (const jornada of empleado.jornada) {
+                    jornadas = jornada.flat().find((dia) => moment(dia.fecha).isSame(moment(data[1]), 'day'))
+                };
+                
+                if (jornadas && data[0]=="normal"&& (e instanceof Date && s instanceof Date != null) ){
+                    jornadas.entrada=e;
+                    jornadas.salida=s;
                     empleado.markModified('jornada');
                     const resultado=await empleado.save();
                     return resultado
                 }else{
-                    if (jornada && data[0]=="extra" && (e instanceof Date && s instanceof Date != null)){
-                        jornada.entrada_horas_extra=e;
-                        jornada.salida_horas_extra=s;
+                    if (jornadas && data[0]=="extra" && (e instanceof Date && s instanceof Date != null)){
+                        jornadas.entrada_horas_extra=e;
+                        jornadas.salida_horas_extra=s;
                         empleado.markModified('jornada');
                         const resultado=await empleado.save();
                         return resultado;
@@ -197,9 +243,12 @@ export class MongoRepository implements EmpleadoRepository{
             const fechaInicio=new Date(data[0]);
             const fechaFin=new Date(data[1]);
             const resultado=EmpleadoModel.aggregate([
+                
                 { $unwind: "$jornada" },
                 { $unwind: "$jornada" },
-                { $match: { "jornada.fecha": { $gte: fechaInicio, $lt: fechaFin } } },
+                { $unwind: "$jornada" },
+                { $match: { "jornada.fecha": { $gte: fechaInicio, $lte: fechaFin } } },
+                { $match: { "rotacion": "6x1" } },
                 {
                   $group: {
                     _id: "$_id",

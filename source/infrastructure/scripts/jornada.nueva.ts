@@ -15,7 +15,7 @@ export default async (id:string) => {
         const fecha = moment([anioActual, mes, dia]).format("l");
         jornadasMensuales.push({
           fecha,
-          feriado: null,
+          feriado: false,
           entrada: null,
           salida: null,
           habilitado_horas_extra: false,
@@ -32,12 +32,13 @@ export default async (id:string) => {
 
       jornadasAnuales.push(jornadasMensuales);
     }
-
+    const jornadasPorAnio = [];
+    jornadasPorAnio.push(jornadasAnuales);
     await EmpleadoModel.updateOne(
       {_id:id},
       {
         $set: {
-          jornada_anual: jornadasAnuales,
+          jornada: jornadasPorAnio,
         },
       },
       { upsert: true }

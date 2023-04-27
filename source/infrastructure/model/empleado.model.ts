@@ -38,11 +38,11 @@ interface IEmpleado extends Document {
     email: string;
     liquidacion_jornal:boolean
     liquidacion_mensual:boolean
+    turno:string
     rotacion:string
     grupo:string
-    jornada: IJornada[];
+    jornada: IJornada[][];
     total_horas_trabajadas:ICalculoHoras[]
-    jornada_extra:IJornada[]
 }
 const EmpleadoSchema= new Schema({
     _id: {
@@ -73,7 +73,12 @@ const EmpleadoSchema= new Schema({
     },
     rotacion:{
         type:String,
-        default:"6x1"
+        
+    },
+    turno:{
+        type:{
+            type:String
+        }
     },
     grupo:{
         type:String,

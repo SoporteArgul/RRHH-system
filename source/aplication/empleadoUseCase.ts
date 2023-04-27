@@ -26,6 +26,15 @@ export class EmpleadoUseCase{
             console.log("Error, no se pudo listar usuarios.")
         }};
     
+    public listByGroup=async(group:string)=>{
+        try{
+            const user=await this.empleadoRepository.listByGroup(group)
+            return user
+        }catch(e){
+            throw Error("Error no se pudo listar el usuario")
+        }
+    }
+    
     //MODIFICAR USUARIO
     public updateUser=async(id:string,{nombre,apellido,edad,cuil,dni,sexo,legajo,email,telefono,domicilio,nivel_educacion,activo,fecha_ingreso,fecha_egreso,convenio,contratacion,categoria,gerencia,area,sector,puesto,rol,jornada,almuerzo,foto,liquidacion,observaciones,uuid,fichada}:{fichada:EntradaSalida[],nombre:string;apellido:string;edad:Number;cuil:string;dni:string;sexo:string;legajo:Number;email:string;telefono:string;domicilio:Domicilio[];nivel_educacion:Educacion[];activo:Boolean;fecha_ingreso:string;fecha_egreso:string;convenio:Convenio[];contratacion:Contratacion[];categoria:Categorias[];gerencia:string;area:string;sector:string;puesto:string;rol:string;jornada:movimientos[];almuerzo:Dias[],foto:string;liquidacion:LiquidacionMeses[];observaciones:string;uuid:string;})=>{
         try{
@@ -51,13 +60,6 @@ export class EmpleadoUseCase{
         try{
             const user=await this.empleadoRepository.clockingUser(empleadoId,data)
             return user
-        }catch(e){
-            console.log("Error, no se pudo fichar usuario.")
-        }};
-
-    public clockingUserExtra=async(empleadoId:string,data:Array<string>)=>{
-        try{
-            const user=await this.empleadoRepository.clockingUserExtra(empleadoId,data)
         }catch(e){
             console.log("Error, no se pudo fichar usuario.")
         }};

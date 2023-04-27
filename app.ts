@@ -9,6 +9,7 @@ import cron from "node-cron"
 import calculoHorasScript from "./source/infrastructure/scripts/calculo.horas.script";
 import totalHorasJornal from "./source/infrastructure/scripts/jornal.script"
 import resultado from "./source/infrastructure/scripts/prueba";
+import prueba from "./source/infrastructure/scripts/prueba";
 
 
 const app = express();
@@ -17,22 +18,17 @@ const port = process.env.PORT || 5001;
 //-----Configuraciones de Express------
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors({origin: '*',methods: 'POST',allowedHeaders: 'Content-Type'}));
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    next();
-  });
+app.use(cors({origin: '*',methods: ['POST','PUT','GET','PATCH'],allowedHeaders: 'Content-Type'}));
 app.use(morgan('dev'))
 app.use(UserRoute)
 //-------------------------------------
 
 //--------Ejecucion de tareas----------
 // cron.schedule('0 0 1 * *',tarea) //una vez al mes crea un calendario con los objetos de entrada y salida para cada empleado.
-tarea()
-calculoHorasScript()
+// tarea()
+// calculoHorasScript()
+// prueba()
+
 //-------------------------------------
 
 //------Base de datos (conector)-------

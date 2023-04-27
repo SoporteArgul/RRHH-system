@@ -18,7 +18,7 @@ const api=`/api/v1/rrhh/`
 route.post(`/register`,empleadoCtrl.insertCtrl)
 route.get(`/listar`,empleadoCtrl.getCrtl)
 route.get(`/getdates`,empleadoCtrl.dateToDate)
+route.get(`/getgroup/:name`,empleadoCtrl.getGroup)
 route.put(`/fichar/normal/:id`,empleadoCtrl.clockingCtrl)
-route.put(`/fichar/extra/:id`,empleadoCtrl.clockingExtraCtrl)
 route.put(`/horas/extra/:id`,empleadoCtrl.uploadHoursCtrl)
 export default route
