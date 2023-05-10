@@ -1,3 +1,4 @@
+import { json } from "body-parser";
 import { EmpleadoUseCase } from "../../aplication/empleadoUseCase"
 import { Request,Response } from 'express';
 
@@ -39,10 +40,16 @@ export class EmpleadoController {
       res.status(500).send({error:'Internal server error'});
     }};
   //CONTROLADOR POST (Registrar un usuario)
-  public insertCtrl= async({body}: Request, res: Response):Promise<void>=> {
-    try{ 
-        const user=await this.userUseCase.registerUser(body)
+  public insertCtrl= async(req: Request, res: Response):Promise<void>=> {
+    try{
+        let data=req.body;
+        data.nivel_educacion=JSON.parse(req.body.nivel_educacion)
+        data.domicilio=JSON.parse(req.body.domicilio)
+        data.categoria=JSON.parse(req.body.categoria)
+        const image=req.file?.path||"";
+        const user=await this.userUseCase.registerUser(image,data)
         res.send({user})
+
     }catch(e){
         console.log(e)
         res.status(500).json({ error: 'Internal server error' });
@@ -61,20 +68,27 @@ public uploadHoursCtrl=async(req:Request,res:Response):Promise<void>=>{
 
 public clockingCtrl=async(req:Request,res:Response):Promise<void>=>{
     try {
-        const name = req.params.id;
+        const name = req.params.name;
         const data=req.body
         const empleado=await this.userUseCase.clockingUser(name,data)
         if (!empleado){
-          res.status(500).send("no se pudo realizar la fichada")
+          res.status(500).send("no se pudo realizar la fichada, intente nuevamente o notifique a recursos humanos")
         }
         res.send(empleado)
       } catch (e) {
-        console.error(e);
         res.status(500).send({ message: 'Internal server error' });
       }  
 }
 
-
+public updateDailyHoursCtrl=async(req:Request,res:Response)=>{
+  try{
+    const empleado=await this.userUseCase.updateDailyHours()
+    if (!empleado)res.status(500).send("no se pudo actualizar las horas diarias")
+    res.status(200).send({msg:"Datos actualizados con exito"})
+  }catch(e){
+    res.status(500).send({ message: 'Internal server error' });
+  }
+}
 
 public dateToDate=async(req:Request, res:Response):Promise<void>=>{
   try{

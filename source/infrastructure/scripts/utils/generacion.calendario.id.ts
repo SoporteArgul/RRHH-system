@@ -1,14 +1,14 @@
-import EmpleadoModel from "../model/empleado.model"
+import EmpleadoModel from "../../model/empleado.model"
 import moment from "moment"
 
-export default async () => {
+export default async (id:string) => {
   try {
-    const empleados = await EmpleadoModel.find();
+    const empleados = await EmpleadoModel.findOne({_id:id});
     const anioActual = moment().year();
     const jornadasAnuales = [];
 
     for (let mes = 0; mes < 12; mes++) {
-      const diasMes = moment([anioActual, mes, 1]).daysInMonth();
+      const diasMes = moment([anioActual, mes]).daysInMonth();
       const jornadasMensuales = [];
 
       for (let dia = 1; dia <= diasMes; dia++) {
@@ -18,6 +18,8 @@ export default async () => {
           feriado: false,
           entrada: null,
           salida: null,
+          entrada_descanso:null,
+          salida_descanso:null,
           habilitado_horas_extra: false,
           entrada_horas_extra: null,
           salida_horas_extra: null,
@@ -34,8 +36,8 @@ export default async () => {
     }
     const jornadasPorAnio = [];
     jornadasPorAnio.push(jornadasAnuales);
-    await EmpleadoModel.updateMany(
-      {},
+    await EmpleadoModel.updateOne(
+      {_id:id},
       {
         $set: {
           jornada: jornadasPorAnio,

@@ -1,48 +1,40 @@
 import { Schema, model, Document, Model } from "mongoose"
-import moment from "moment"
 import mongoose from "mongoose";
+import "dotenv/config"
+import { Domicilio,Educacion,Categorias,Jornadas as IJornada, Liquidacion as ICalculoHoras}  from "../../domain/empleado/empleado.interface";
 
-
-interface IJornada {
-    fecha: Date;
-    feriado:boolean;
-    entrada: Date | null;
-    salida: Date | null;
-    habilitado_horas_extra:boolean
-    entrada_horas_extra:Date | null;
-    salida_horas_extra:Date| null;
-    horas_diurnas:number
-    horas_nocturnas:number
-    horas_diuras_50:number
-    horas_nocturnas_50:number
-    horas_diurnas_100:number
-    horas_nocturnas_100:number
-  }
-
-interface ICalculoHoras{
-    fecha_liquidacion_horas:Date
-    total_horas_diurnas:number,
-    total_horas_nocturnas:number,
-    total_horas_diurnas_50:number,
-    total_horas_nocturnas_50:number,
-    total_horas_diurnas_100:number,
-    total_horas_nocturnas_100:number
-}
-
+const MENSAJE:string="Ingrese un valor que este en las opciones!"
 interface IEmpleado extends Document {
-    nombre: string;
-    apellido: string;
-    edad: number;
-    sexo: string;
-    legajo: number;
-    email: string;
-    liquidacion_jornal:boolean
-    liquidacion_mensual:boolean
-    turno:string
-    rotacion:string
-    grupo:string
-    jornada: IJornada[][];
-    total_horas_trabajadas:ICalculoHoras[]
+    nombre: string,
+    apellido: string,
+    edad: number,
+    cuil: string,
+    dni: string,
+    sexo: string,
+    legajo: number,
+    email: string,
+    telefono: string,
+    domicilio: Domicilio[],
+    fecha_ingreso:string;
+    fecha_egreso:string;
+    nivel_educacion: Educacion[],
+    activo: boolean,
+    convenio: string,
+    contratacion: string,
+    categoria: Categorias[],
+    gerencia: string,
+    area: string,
+    sector: string,
+    puesto: string,
+    rol: string,
+    tipo_liquidacion:string,
+    rotacion:string,
+    grupo:string,
+    turno:string,
+    jornada: IJornada[][],
+    liquidacion:ICalculoHoras[],
+    observaciones:string,
+    foto:string,
 }
 const EmpleadoSchema= new Schema({
     _id: {
@@ -58,30 +50,160 @@ const EmpleadoSchema= new Schema({
     edad:{
         type:Number
     },
+    cuil:{
+        type:String
+    },
+    dni:{
+        type:String
+    },
+    sexo:{
+        type:String
+    },
     legajo:{
         type:Number
     },
     email:{
         type:String
     },
-    liquidacion_mensual:{
+    telefono:{
+        type:String
+    },
+    domicilio:[{
+      pais:{
+        type:String
+      },
+      provincia:{
+        type:String
+      },
+      localidad:{
+        type:String
+      },
+      calle:{
+        type:String
+      },
+      numero:{
+        type:Number
+      }  
+    }],
+    nivel_educacion:[{
+      primario:{
+        type:Boolean,
+        default:false
+      },
+      secundario:{
+        type:Boolean,
+        default:false
+      },
+      terciario:{
+        type:Boolean,
+        default:false
+      },
+      universitario:{
+        type:Boolean,
+        default:false
+      },
+      titulo:{
+        type:String
+      }  
+    }],
+    activo:{
         type:Boolean
     },
-    liquidacion_jornal:{
+    fecha_ingreso:{
+        type:Date,
+        default:new Date()
+    },
+    fecha_egreso:{
+        type:Date||null,
+        default:null
+    },
+    convenio:{
+        type:String,
+        enum:{
+            values:["Plastico","Otro"],
+            message:MENSAJE
+        }
+    },
+    contratacion:{
+        type:String,
+        enum:{
+            values:["Eventual","Agencia","Efectivo","Externo"],
+            message:MENSAJE     
+        }
+    },
+    categoria:[{
+      produccion:{
+        type:String,
+        enum:{
+            values:["Operario","Auxiliar","Operador","Operador Calificado","Operador Especializado","Oficial Especializado",null],
+            message:MENSAJE
+        },
+        default:null
+      },
+      mantenimiento:{
+        type:String,
+        enum:{
+            values:["Medio Oficial Mantenimiento","Oficial de Mantenimiento",null],
+            message:MENSAJE
+        },
+        default:null
+      },
+      administracion:{
+        type:String,
+        enum:{
+            values:["Nivel 1","Nivel 2","Nivel 3","Nivel 4","Nivel 5","Capataz","Ayudante de Chofer","Conductor de Autoelevador",null],
+            message:MENSAJE
+        },
+        default:null
+      },
+      provedor:{
         type:Boolean,
-        default:true
+        default:false
+      }  
+    }],
+    gerencia:{
+        type:String
+    },
+    area:{
+        type:String
+    },
+    sector:{
+        type:String
+    },
+    puesto:{
+        type:String
+    },
+    rol:{
+        type:String
+    },
+    tipo_liquidacion:{
+        type:String,
+        enum:{
+            values:["Jornal","Mensual"],
+            message:MENSAJE
+        }
     },
     rotacion:{
         type:String,
-        
+        enum:{
+            values:["Fijo","6x1"],
+            message:MENSAJE
+        }
     },
     turno:{
-        type:{
-            type:String
-        }
+        type:String,
+        enum:{
+            values:["Mañana","Tarde","Noche"],
+            message:MENSAJE
+        },
+        default:"Mañana" 
     },
     grupo:{
         type:String,
+        enum:{
+            values:["A","B","C"],
+            message:MENSAJE,
+        },
         default:"A"
     },
     jornada: [[[{
@@ -100,6 +222,14 @@ const EmpleadoSchema= new Schema({
         salida: {
             type: Date,
         },
+        entrada_descanso:{
+            type:Date,
+            default:null, 
+        },
+        salida_descanso:{
+            type:Date,
+            default:null, 
+        },
         habilitado_horas_extra:{
             type:Boolean,
             default:false
@@ -112,7 +242,12 @@ const EmpleadoSchema= new Schema({
             type:Date,
             default:null,
         },
-        horas_diuras:{
+        descanso:{
+            type:Boolean,
+            default:true
+            
+        },
+        horas_diurnas:{
             type:Number,
             default:0   
         },
@@ -137,8 +272,7 @@ const EmpleadoSchema= new Schema({
             default:0
         }  
     }]]],
-
-    total_horas_trabajadas:[{
+    liquidacion:[{
         fecha_liquidacion_horas:{
             type:Date,
             default:null
@@ -168,13 +302,19 @@ const EmpleadoSchema= new Schema({
             default:0
         },
 
-    }] 
+    }],
+    observaciones:{
+        type:String
+    },
+    foto:{
+        type:String,
+        default:""
+    }
 },
 {
     timestamps: true,
     versionKey: false
 });
-
 
 
 const EmpleadoModel = model<IEmpleado>("empleado.rrhh.ts", EmpleadoSchema)

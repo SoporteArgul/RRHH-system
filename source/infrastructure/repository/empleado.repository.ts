@@ -1,18 +1,19 @@
 import { EmpleadoEntity } from "../../domain/empleado/empleado.entity";
 import { EmpleadoRepository } from "../../domain/empleado/empleado.repository";
 import EmpleadoModel from "../model/empleado.model";
-import tarea from "../scripts/jornada.nueva"
+import generacion_calendario from "../scripts/utils/generacion.calendario.id"
 import moment from "moment-timezone";
-import tarea2 from"../scripts/jornal.script"
-export class MongoRepository implements EmpleadoRepository{
-    
+import generacion_liquidacion from"../scripts/utils/liquidacion.quincenal"
+import buscarFecha from "../scripts/utils/buscar.fecha";
 
-    async registerUser(userIn:EmpleadoEntity):Promise<any>{
+
+
+export class MongoRepository implements EmpleadoRepository{
+    async registerUser(imagePath:string,userIn:EmpleadoEntity):Promise<any>{
         try{
             const user= await EmpleadoModel.create(userIn)
-            tarea(user._id.toString())
-            tarea2(user._id.toString())
-
+            generacion_calendario(user._id.toString())
+            generacion_liquidacion(user._id.toString())
             return user
         }catch(e){
             console.log(e)
@@ -69,136 +70,25 @@ export class MongoRepository implements EmpleadoRepository{
         }catch(e){
             console.log("Error de repositorio")
         }
-    }
-    
-   
-    async clockingUser(empleadoId:string,data:Array<string>): Promise<any> {
+    } 
+    async findByLegajo(legajo:string): Promise<any> {
         try{
-            moment.locale('es');
-            moment.tz.setDefault('America/Argentina/Buenos_Aires');
-            empleadoId=empleadoId.toString();
-            const fechaActual=moment().format('l').toString();
-            const horaActual = "18:10:15"
-            const horaActualDate = moment(horaActual, 'LTS').toDate();
-            let jornadas=null
-            const empleado=await EmpleadoModel.findOne({_id:empleadoId}); //buscamos el empleado que queremos modificar
-            const hora_salida_mañana="14:00:00"
-            const hora_entrada_mañana="05:10:00"
-            if (empleado) {//verificamos que este el empleado
-               
-                for (const jornada of empleado.jornada) {
-                    jornadas = jornada.flat().find((j) => moment(j.fecha).format('l') === fechaActual);
-                };
-                if (jornadas){
-                //ENTRADA
-                //verificamos si no existe una entrada y luego nos fijamos que el horario sea menor
-                if (jornadas.entrada==null){
-                    console.log("entre")
-                    if (empleado.turno =="mañana" && (horaActual>="05:00:00" && horaActual<="06:06:00")){
-                        jornadas.entrada=horaActualDate
-                        empleado.markModified('jornada')
-                        const resultado=await empleado.save()
-                        return resultado;
-                    }
-                    if (empleado.turno =="tarde"&& (horaActual>="13:00:00" && horaActual<="14:06:00")){
-                        jornadas.entrada=horaActualDate
-                        empleado.markModified('jornada')
-                        const resultado=await empleado.save()
-                        return resultado
-                    }
-                    if (empleado.turno =="noche"&& (horaActual>="21:00:00"&& horaActual<="22:05:00")){
-                        jornadas.entrada=horaActualDate
-                        empleado.markModified('jornada')
-                        const resultado=await empleado.save()
-                        return resultado
-                    }
-                };
-
-                //SALIDA
-                //verificamos los ragos horarios y luego fijamos el horario de salida
-                if (jornadas.entrada != null && jornadas.salida==null){
-                    if (empleado.turno=="mañana" && (horaActual>="14:00:00" && horaActual<="14:45:00")){
-                        jornadas.salida=horaActualDate
-                        empleado.markModified('jornada')
-                        const resultado=await empleado.save()
-                        return resultado
-                    }
-                    if (empleado.turno=="tarde" && (horaActual>="22:00:00" && horaActual<="22:45:00")){
-                        jornadas.salida=horaActualDate
-                        empleado.markModified('jornada')
-                        const resultado=await empleado.save()
-                        return resultado
-                    }
-                    if (empleado.turno=="noche" && (horaActual>="06:00:00" && horaActual<="06:45:00")){
-                        jornadas.salida=horaActualDate
-                        empleado.markModified('jornada')
-                        const resultado=await empleado.save()
-                        return resultado
-                    }
-                }
-
-
-                //HORAS EXTRA ENTRADA
-                if((jornadas.entrada && jornadas.salida) && jornadas.habilitado_horas_extra && jornadas.entrada_horas_extra==null && empleado.turno=="mañana" ){
-
-                    if (horaActual>="14:00" && horaActual<="14:20" ){
-                        jornadas.entrada_horas_extra=horaActualDate
-                        empleado.markModified('jornada')
-                        const resultado=await empleado.save()
-                        return resultado
-                    }}
-
-                if((!jornadas.entrada&&!jornadas.salida) && jornadas.habilitado_horas_extra && (empleado.turno=="noche"||empleado.turno=="tarde")){
-              
-                    if (empleado.turno=="tarde" && ( horaActual>="9:45" && horaActual<= "13:05" )){
-                        jornadas.entrada_horas_extra=horaActualDate
-                        empleado.markModified('jornada')
-                        const resultado=await empleado.save()
-                        return resultado
-                    }
-                    if(empleado.turno=="noche" && (horaActual>="17:45" && horaActual <= "21:05" )){
-                        jornadas.entrada_horas_extra=horaActualDate
-                        empleado.markModified('jornada')
-                        const resultado=await empleado.save()
-                        return resultado 
-                    }
-                }
-                //HORAS EXTRA SALIDA
-
-
-                if (jornadas.habilitado_horas_extra && jornadas.entrada_horas_extra &&  jornadas.salida_horas_extra==null){
-                   
-                    if(empleado.turno=="tarde"&& (horaActual>="11:00" && horaActual<="14:45") ){
-                        jornadas.salida_horas_extra=horaActualDate
-                        empleado.markModified("jornada")
-                        const resultado=await empleado.save()
-                        return resultado
-                    }
-                    if(empleado.turno=="mañana"&& (horaActual>="13:00" && horaActual<="18:45")){
-                        jornadas.salida_horas_extra=horaActualDate
-                        empleado.markModified("jornada")
-                        const resultado=await empleado.save()
-                        return resultado
-                    }
-                    if(empleado.turno=="noche"&& horaActual<="22:45"){
-                        jornadas.salida_horas_extra=horaActualDate
-                        empleado.markModified("jornada")
-                        const resultado=await empleado.save()
-                        return resultado
-                    }
-
-                }
-                }}
-    
+            const empleado=await EmpleadoModel.findOne({legajo:legajo});
+            return empleado
         }catch(e){
-            console.log(e)
             console.log("Error de repositorio")
         }
         
     }
-
-
-
+    async saveChangesJornada(empleado: any): Promise<any> {
+        try{
+            empleado.markModified('jornada')
+            const resultado=await empleado.save()
+            return resultado;
+        }catch(e){
+            console.log("error de repositorio")
+        }
+    }
     async updateExtraHours(id: string, data:Array<Date|string>): Promise<any> {
         try{
             //esta va a ser una funcionalidad para los administradores donde van a poder cargar 
@@ -211,10 +101,7 @@ export class MongoRepository implements EmpleadoRepository{
             if (empleado && data){
                 //buscamos el la jornada que queremos cargar, si existe entra y modifica 
                 //sino nos va a lanzar un error
-                for (const jornada of empleado.jornada) {
-                    jornadas = jornada.flat().find((dia) => moment(dia.fecha).isSame(moment(data[1]), 'day'))
-                };
-                
+                jornadas=buscarFecha(empleado.jornada,moment(data[1]))
                 if (jornadas && data[0]=="normal"&& (e instanceof Date && s instanceof Date != null) ){
                     jornadas.entrada=e;
                     jornadas.salida=s;
@@ -243,7 +130,6 @@ export class MongoRepository implements EmpleadoRepository{
             const fechaInicio=new Date(data[0]);
             const fechaFin=new Date(data[1]);
             const resultado=EmpleadoModel.aggregate([
-                
                 { $unwind: "$jornada" },
                 { $unwind: "$jornada" },
                 { $unwind: "$jornada" },
@@ -286,5 +172,157 @@ export class MongoRepository implements EmpleadoRepository{
             console.log("error de repositorio")
         }
     }
+    async updateDailyHours(): Promise<any> {
+        try{
+            const empleado=await EmpleadoModel.find({rotacion:"6x1"})
+        const fecha_ayer=moment().subtract(1,"days").format('l').toString();
+        if (empleado){
+            let jornadas=null
+            for (const emp of empleado){            
+                for (const jornada of emp.jornada) {
+                    jornadas = jornada.flat().find((j:any) => moment(j.fecha).format('l') === fecha_ayer);
+                };
+                const hora_entrada=moment(jornadas?.entrada).hours();
+                const hora_salida=moment(jornadas?.salida).hours();
+                const hora_entrada_extra=moment(jornadas?.entrada_horas_extra).hours();
+                const hora_salida_extra=moment(jornadas?.salida_horas_extra).hours();
+                if(jornadas){
+
+                    //Turno mañana
+                    if (emp.turno=="mañana"){
+                        //Calculo de la jornada normal
+                        if(hora_entrada==6 && hora_salida==14){
+                            if (jornadas.feriado)jornadas.horas_diurnas_100+=8  
+                            else jornadas.horas_diurnas+=8
+                        }               
+                        //Calculo de las horas extra 
+                        if (hora_entrada_extra==14 ){
+                            if(jornadas?.feriado){
+                                if(hora_salida_extra==15)jornadas.horas_diurnas_100+=1;
+                                if(hora_salida_extra==16)jornadas.horas_diurnas_100+=2;
+                                if(hora_salida_extra==17)jornadas.horas_diurnas_100+=3;
+                                if(hora_salida_extra==18)jornadas.horas_diurnas_100+=4;
+                            }else{
+                                if(hora_salida_extra==15)jornadas.horas_diurnas_50+=1;
+                                if(hora_salida_extra==16)jornadas.horas_diurnas_50+=2;
+                                if(hora_salida_extra==17)jornadas.horas_diurnas_50+=3;
+                                if(hora_salida_extra==18)jornadas.horas_diurnas_50+=4;
+                            }       
+                        }  
+                    }
+                    //Turno tarde
+                    if (emp.turno=="tarde"){
+                        //Jornada comun
+                        if (hora_entrada==14 && hora_salida==22){
+                            if (jornadas.feriado)jornadas.horas_diurnas_100+=7,jornadas.horas_nocturnas_100+=1
+                            else jornadas.horas_diurnas+=7,jornadas.horas_nocturnas+=1
+                        }
+                        //Jornada extra
+                        if (hora_salida_extra==14 ){
+                            if(jornadas?.feriado){
+                                if(hora_entrada_extra==10)jornadas.horas_diurnas_100+=4;
+                                if(hora_entrada_extra==11)jornadas.horas_diurnas_100+=3;
+                                if(hora_entrada_extra==12)jornadas.horas_diurnas_100+=2;
+                                if(hora_entrada_extra==13)jornadas.horas_diurnas_100+=1;
+                            }else{
+                                if(hora_entrada_extra==10)jornadas.horas_diurnas_50+=4;
+                                if(hora_entrada_extra==11)jornadas.horas_diurnas_50+=3;
+                                if(hora_entrada_extra==12)jornadas.horas_diurnas_50+=2;
+                                if(hora_entrada_extra==13)jornadas.horas_diurnas_50+=1;
+                            }       
+                        }  
+                    }
+                    //Turno noche
+                    if (emp.turno=="noche"){
+                        //Jornada comun
+                        if (hora_entrada==22 && hora_salida==6){
+                            if (jornadas.feriado)jornadas.horas_nocturnas_100+=6,jornadas.horas_nocturnas+=2
+                            else jornadas.horas_nocturnas+=8
+                        }
+                        //Jornada extra
+                        if (hora_salida_extra==22 ){
+                            if(jornadas?.feriado){
+                                if(hora_entrada_extra==18)jornadas.horas_diurnas_100+=4;
+                                if(hora_entrada_extra==19)jornadas.horas_diurnas_100+=3;
+                                if(hora_entrada_extra==20)jornadas.horas_diurnas_100+=2;
+                                if(hora_entrada_extra==21)jornadas.horas_diurnas_100+=1;
+                            }else{
+                                if(hora_entrada_extra==18)jornadas.horas_diurnas_50+=4;
+                                if(hora_entrada_extra==19)jornadas.horas_diurnas_50+=3;
+                                if(hora_entrada_extra==20)jornadas.horas_diurnas_50+=2;
+                                if(hora_entrada_extra==21)jornadas.horas_diurnas_50+=1;
+                            }       
+                        }  
+                    }
+                    emp.markModified("jornada")
+                    const resultado=await emp.save()   
+                        
+                }
+                
+
+            }
+        }
+  
+        }catch(e){
+            console.log("error")
+        }
+    }
+    async report(): Promise<any> {
+        const hoy = moment().date(15);
+        let fechaInicio, fechaFin:any;
+        
+        if (hoy <= moment().date(15)) {
+          // Hoy es 1-15 del mes
+          fechaInicio = moment().date(1).toDate();
+          fechaFin = moment().date(15).toDate();
+        } else {
+          // Hoy es 16-fin de mes
+          fechaInicio = moment().date(16).toDate();
+          fechaFin = moment().endOf('month').toDate();
+        }
+        const empleados=await EmpleadoModel.aggregate([
+            { $unwind: "$jornada" },
+            { $unwind: "$jornada" },
+            { $unwind: "$jornada" },
+            { $match: { "jornada.fecha": { $gte: fechaInicio, $lte: fechaFin } } },
+            { $match: { "rotacion": "6x1" } },
+            {
+              $group: {
+                _id: "$_id",
+                nombre: { $first: "$nombre" },
+                apellido: { $first: "$apellido" },
+                edad: { $first: "$edad" },
+                legajo: { $first: "$legajo" },
+                email: { $first: "$email" },
+                liquidacion_mensual: { $first: "$liquidacion_mensual" },
+                liquidacion_jornal: { $first: "$liquidacion_jornal" },
+                rotacion: { $first: "$rotacion" },
+                grupo: { $first: "$grupo" },
+                jornada: { $push: "$jornada" },
+                total_horas_trabajadas:{$first:"$total_horas_trabajadas"}
+              }
+            },
+            {
+              $project: {
+                _id: 1,
+                nombre: 1,
+                apellido: 1,
+                edad: 1,
+                legajo: 1,
+                email: 1,
+                liquidacion_mensual: 1,
+                liquidacion_jornal: 1,
+                jornada:1,
+                rotacion: 1,
+                grupo: 1,
+                total_horas_trabajadas: 1
+              }
+            }
+          ]);
+          return empleados
+        
+        
+    }
+
 }
     

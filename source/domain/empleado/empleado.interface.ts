@@ -1,50 +1,26 @@
-interface EntradaSalida{
-    entrada:Date;
-    salida:Date;
-}
 
-
-interface Dias{
-  _1:EntradaSalida[];
-  _2:EntradaSalida[];
-  _3:EntradaSalida[];
-  _4:EntradaSalida[];
-  _5:EntradaSalida[];
-  _6:EntradaSalida[];
-  _7:EntradaSalida[];
-  _8:EntradaSalida[];
-  _9:EntradaSalida[];
-  _10:EntradaSalida[];
-  _11:EntradaSalida[];
-  _12:EntradaSalida[];
-  _13:EntradaSalida[];
-  _14:EntradaSalida[];
-  _15:EntradaSalida[];
-  _16:EntradaSalida[];
-  _17:EntradaSalida[];
-  _18:EntradaSalida[];
-  _19:EntradaSalida[];
-  _20:EntradaSalida[];
-  _21:EntradaSalida[];
-  _22:EntradaSalida[];
-  _23:EntradaSalida[];
-  _24:EntradaSalida[];
-  _25:EntradaSalida[];
-  _26:EntradaSalida[];
-  _27:EntradaSalida[];
-  _28:EntradaSalida[];
-  _29:EntradaSalida[];
-  _30:EntradaSalida[];
-  _31:EntradaSalida[];
-}
 interface Convenio{
     plastico:string
     fuera_convenio:string
 }
 
-interface movimientos{
+interface Jornadas{
    fecha: Date;
-   entradasSalidas:EntradaSalida[]
+   feriado:Boolean;
+   entrada:Date|null;
+   salida:Date|null;
+   entrada_descanso:Date|null;
+   salida_descanso:Date|null;
+   habilitado_horas_extra:Boolean;
+   entrada_horas_extra:Date|null;
+   salida_horas_extra:Date|null;
+   descanso:Boolean;
+   horas_diurnas:number;
+   horas_nocturnas:number;
+   horas_diurnas_50:number;
+   horas_nocturnas_50:number;
+   horas_diurnas_100:number;
+   horas_nocturnas_100:number;
 }
 
 interface Contratacion{
@@ -55,22 +31,10 @@ interface Contratacion{
 }
 
 
-interface LiquidacionMeses{
-    enero:Number;
-    febrero:Number;
-    marzo:Number;
-    abril:Number;
-    mayo:Number;
-    junio:Number;
-    julio:Number;
-    agosto:Number;
-    septiembre:Number;
-    octubre:Number;
-    noviembre:Number;
-    diciembre:Number;
-}
+
 
 interface Domicilio{
+    pais:string;
     provincia:string;
     localidad:string;
     calle:string;
@@ -87,27 +51,14 @@ interface Educacion{
 }
 
  interface Produccion{
-    operario:Boolean;
-    auxiliar:Boolean;
-    operador:Boolean;
-    operador_calificado:Boolean;
-    operador_especializado:Boolean;
-    ofifical_especializado:Boolean;
+    posicion:string
  }
 interface Mantenimiento{
-    medio_oficial_mantenimiento:Boolean;
-    oficial_de_mantenimiento:Boolean;
+    posicion:string
 }
 
 interface Administracion{
-    nivel_1:Boolean;
-    nivel_2:Boolean;
-    nivel_3:Boolean;
-    nivel_4:Boolean;
-    nivel_5:Boolean;
-    capataz:Boolean;
-    ayudante_de_chofer:Boolean;
-    conductor_de_autoevaluador:Boolean;
+    posicion:string
 }
 
 interface Categorias{
@@ -116,5 +67,33 @@ interface Categorias{
     administracion:Administracion[]
     fuera_convenio:Boolean;
 }
+interface Liquidacion{
+    fecha_liquidacion_horas:Date;
+    total_horas_diurnas:Number;
+    total_horas_nocturnas:Number;
+    total_horas_diurnas_50:Number;
+    total_horas_nocturnas_50:Number;
+    total_horas_diurnas_100:Number;
+    total_horas_nocturnas_100:Number;
+}
 
-export {movimientos,Convenio,EntradaSalida,Contratacion,Categorias,Educacion,Domicilio,Dias,LiquidacionMeses}
+interface Licencias{
+    accidente:boolean;
+    enfermedad:boolean;
+    vacaciones:boolean;
+    maternidad:boolean;
+    mudanza:boolean;
+    ausente_con_aviso:boolean;
+    ausente_sin_aviso:boolean;
+    examen:boolean;
+    suspension:boolean;
+    fallecimineto:boolean;
+    matrimonio:boolean;
+    donacion_de_sangre:boolean;
+    ausencia_enfermedad_injustificada:boolean;
+    reserva_legal_de_puesto:boolean;
+    licencia_aislamiento:boolean;
+    licencia_covid:boolean;
+}
+
+export {Licencias,Jornadas,Categorias,Educacion,Domicilio,Liquidacion}

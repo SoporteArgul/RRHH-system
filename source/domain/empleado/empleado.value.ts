@@ -1,36 +1,37 @@
 import { EmpleadoEntity } from "./empleado.entity";
-import {Contratacion,Categorias,Educacion,Domicilio,Dias,LiquidacionMeses, EntradaSalida, Convenio, movimientos} from "./empleado.interface";
+import {Categorias,Educacion,Domicilio,Jornadas,Liquidacion} from "./empleado.interface";
 
 export class EmpleadoValue implements EmpleadoEntity{
     nombre:string;
     apellido:string;
-    edad:Number;
+    edad:number;
     cuil:string;
     dni:string;
     sexo:string;
-    legajo:Number;
+    legajo:number;
     email:string;
     telefono:string;
     domicilio:Domicilio[];
-    nivel_educacion:Educacion[];
-    activo:Boolean;
     fecha_ingreso:string;
-    fecha_egreso:string;
-    convenio:Convenio[];
-    contratacion:Contratacion[];
+    fecha_egreso: string;
+    nivel_educacion:Educacion[];
+    activo:boolean;
+    convenio:string;
+    contratacion:string;
     categoria:Categorias[];
     gerencia:string;
     area:string;
     sector:string;
     puesto:string;
     rol:string;
-    jornada:movimientos[];
-    almuerzo: Dias[];
-    foto:string;
-    liquidacion:LiquidacionMeses[];
-    fichada: EntradaSalida[];
+    tipo_liquidacion: string;
+    rotacion: string;
+    grupo: string;
+    turno: string;
+    jornada:Jornadas[];
+    liquidacion:Liquidacion[];
     observaciones:string;
-    uuid:string;
+    foto:string;
     constructor({    
         nombre,
         apellido,
@@ -43,9 +44,9 @@ export class EmpleadoValue implements EmpleadoEntity{
         telefono,
         domicilio,
         nivel_educacion,
-        activo,
         fecha_ingreso,
         fecha_egreso,
+        activo,
         convenio,
         contratacion,
         categoria,
@@ -54,42 +55,46 @@ export class EmpleadoValue implements EmpleadoEntity{
         sector,
         puesto,
         rol,
+        tipo_liquidacion,
+        rotacion,
+        turno,
+        grupo,
         jornada,
-        almuerzo,
         foto,
         liquidacion,
         observaciones,
-        fichada,
-        uuid,}:{    
+        }:{    
         nombre:string;
         apellido:string;
-        edad:Number;
+        edad:number;
         cuil:string;
         dni:string;
         sexo:string;
-        legajo:Number;
+        legajo:number;
         email:string;
         telefono:string;
         domicilio:Domicilio[];
-        nivel_educacion:Educacion[];
-        activo:Boolean;
         fecha_ingreso:string;
         fecha_egreso:string;
-        convenio:Convenio[];
-        contratacion:Contratacion[];
+        nivel_educacion:Educacion[];
+        activo:boolean;
+        convenio:string;
+        contratacion:string;
         categoria:Categorias[];
         gerencia:string;
         area:string;
         sector:string;
         puesto:string;
         rol:string;
-        jornada:movimientos[];
-        almuerzo:Dias[];
-        foto:string;
-        liquidacion:LiquidacionMeses[];
-        fichada:EntradaSalida[];
+        tipo_liquidacion:string;
+        rotacion:string;
+        turno:string;
+        grupo:string;
+        jornada:Jornadas[];
+        liquidacion:Liquidacion[];
         observaciones:string;
-        uuid:string;}){
+        foto:string;
+        }){
             this.nombre=nombre
             this.apellido=apellido
             this.edad=edad
@@ -100,10 +105,10 @@ export class EmpleadoValue implements EmpleadoEntity{
             this.email=email
             this.telefono=telefono
             this.domicilio=domicilio
-            this.nivel_educacion=nivel_educacion
-            this.activo=activo
             this.fecha_ingreso=fecha_ingreso
             this.fecha_egreso=fecha_egreso
+            this.nivel_educacion=nivel_educacion
+            this.activo=activo
             this.convenio=convenio
             this.contratacion=contratacion
             this.categoria=categoria
@@ -112,12 +117,13 @@ export class EmpleadoValue implements EmpleadoEntity{
             this.sector=sector
             this.puesto=puesto
             this.rol=rol
+            this.tipo_liquidacion=tipo_liquidacion
+            this.rotacion=rotacion
+            this.grupo=grupo
+            this.turno=turno
             this.jornada=jornada
-            this.almuerzo=almuerzo
             this.foto=foto
             this.liquidacion=liquidacion
-            this.fichada=fichada
             this.observaciones=observaciones
-            this.uuid=uuid
         }
 }
