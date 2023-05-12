@@ -10,6 +10,11 @@ const storage = multer.diskStorage({
       cb(null, uuid()+path.extname(file.originalname));
     }
   });
+
+const storage2=multer.memoryStorage()
 const upload =multer({ storage: storage });
+
+
+
 export default upload
 

@@ -1,7 +1,7 @@
 import { EmpleadoController } from './../controllers/empleado.ctrl';
 import { Router } from "express";
 import { EmpleadoUseCase } from "../../aplication/empleadoUseCase";
-import { MongoRepository } from "../repository/empleado.repository";
+import { MongoRepository } from "../repository/empleado.repository.mongo";
 import upload from "../storage/multer"
 
 const route=Router()
@@ -16,13 +16,20 @@ const api=`/api/v1/rrhh/`
 // route.put(`${api}/update/:id`,empleadoCtrl.updateCtrl)
 // route.delete(`${api}/delete/:id`,empleadoCtrl.deleteCtrl)
 
-//REGISTRO Y LOGIN
-route.post(`/register`,upload.single("image"),empleadoCtrl.insertCtrl)
-route.get(`/listar`,empleadoCtrl.getCrtl)
-route.get(`/getdates`,empleadoCtrl.dateToDate)
-route.get(`/getgroup/:name`,empleadoCtrl.getGroup)
-route.put(`/fichar/normal/:name`,empleadoCtrl.clockingCtrl)
-route.put(`/horas/extra/:id`,empleadoCtrl.uploadHoursCtrl)
 
+//POST
+route.post(`/register`,upload.single("image"),empleadoCtrl.insertCtrl);
+//GET
+route.get(`/listar`,empleadoCtrl.getCrtl);
+route.get(`/dias`,empleadoCtrl.dateToDate);
+route.get(`/grupo/:name`,empleadoCtrl.getGroup);
+route.get(`/buscar`,empleadoCtrl.searchCtrl)
+route.get(`/activar/:name`,empleadoCtrl.activeCtrl);
+route.get(`/listar/legajo/:name`,empleadoCtrl.legajoCtrl);
+//PUT
+route.put(`/fichar/:name`,empleadoCtrl.clockingCtrl);
+route.put(`/cargar/:id`,empleadoCtrl.uploadHoursCtrl);
+route.put(`/actualizar/:name`,empleadoCtrl.update);
+route.put(`/habilitar/:name`,empleadoCtrl.searchDayAndUpdate);
 
 export default route

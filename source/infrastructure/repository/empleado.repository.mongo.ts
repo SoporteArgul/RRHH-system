@@ -30,7 +30,7 @@ export class MongoRepository implements EmpleadoRepository{
     }
     async listUser():Promise<any>{
         try{
-            const user=await EmpleadoModel.find()
+            const user=await EmpleadoModel.find({},{jornada:0,liquidacion:0})
             return user 
         }catch(e){
             console.log("Error de repositorio")
@@ -52,14 +52,20 @@ export class MongoRepository implements EmpleadoRepository{
     async listByRotation(): Promise<any> {
         
     }
-    async listBySearch(): Promise<any> {
-        
-    }
-    async updateUser(id:string,update:EmpleadoEntity):Promise<any>{
+    async listBySearch(query:any): Promise<any> {
         try{
-            const user=await EmpleadoModel.findByIdAndUpdate(id,update)
+            const form= await EmpleadoModel.aggregate([{$match:query}])
+            return form;
+        }catch(e){
+            console.log("Error, intente nuevamente o contacte al administrador!")
+        }
+    }
+    async updateUser(legajo:string,update:EmpleadoEntity):Promise<any>{
+        try{
+            const user=await EmpleadoModel.findOneAndUpdate({ legajo: legajo },{ $set: update },{ new: true })
             return user
         }catch(e){
+            console.log(e)
             console.log("Error de repositorio")
         }
     }
@@ -74,6 +80,15 @@ export class MongoRepository implements EmpleadoRepository{
     async findByLegajo(legajo:string): Promise<any> {
         try{
             const empleado=await EmpleadoModel.findOne({legajo:legajo});
+            return empleado
+        }catch(e){
+            console.log("Error de repositorio")
+        }
+        
+    }
+    async findByLegajo2(legajo:string): Promise<any> {
+        try{
+            const empleado=await EmpleadoModel.findOne({legajo:legajo},{jornada:0,liquidacion:0});
             return empleado
         }catch(e){
             console.log("Error de repositorio")
@@ -175,87 +190,86 @@ export class MongoRepository implements EmpleadoRepository{
     async updateDailyHours(): Promise<any> {
         try{
             const empleado=await EmpleadoModel.find({rotacion:"6x1"})
-        const fecha_ayer=moment().subtract(1,"days").format('l').toString();
-        if (empleado){
-            let jornadas=null
-            for (const emp of empleado){            
-                for (const jornada of emp.jornada) {
-                    jornadas = jornada.flat().find((j:any) => moment(j.fecha).format('l') === fecha_ayer);
-                };
-                const hora_entrada=moment(jornadas?.entrada).hours();
-                const hora_salida=moment(jornadas?.salida).hours();
-                const hora_entrada_extra=moment(jornadas?.entrada_horas_extra).hours();
-                const hora_salida_extra=moment(jornadas?.salida_horas_extra).hours();
-                if(jornadas){
-
-                    //Turno mañana
-                    if (emp.turno=="mañana"){
-                        //Calculo de la jornada normal
-                        if(hora_entrada==6 && hora_salida==14){
-                            if (jornadas.feriado)jornadas.horas_diurnas_100+=8  
-                            else jornadas.horas_diurnas+=8
-                        }               
-                        //Calculo de las horas extra 
-                        if (hora_entrada_extra==14 ){
-                            if(jornadas?.feriado){
-                                if(hora_salida_extra==15)jornadas.horas_diurnas_100+=1;
-                                if(hora_salida_extra==16)jornadas.horas_diurnas_100+=2;
-                                if(hora_salida_extra==17)jornadas.horas_diurnas_100+=3;
-                                if(hora_salida_extra==18)jornadas.horas_diurnas_100+=4;
-                            }else{
-                                if(hora_salida_extra==15)jornadas.horas_diurnas_50+=1;
-                                if(hora_salida_extra==16)jornadas.horas_diurnas_50+=2;
-                                if(hora_salida_extra==17)jornadas.horas_diurnas_50+=3;
-                                if(hora_salida_extra==18)jornadas.horas_diurnas_50+=4;
-                            }       
-                        }  
-                    }
-                    //Turno tarde
-                    if (emp.turno=="tarde"){
-                        //Jornada comun
-                        if (hora_entrada==14 && hora_salida==22){
-                            if (jornadas.feriado)jornadas.horas_diurnas_100+=7,jornadas.horas_nocturnas_100+=1
-                            else jornadas.horas_diurnas+=7,jornadas.horas_nocturnas+=1
+            const fecha_ayer=moment().subtract(1,"days").format('l').toString();
+            if (empleado){
+                let jornadas=null
+                for (const emp of empleado){            
+                    for (const jornada of emp.jornada) {
+                        jornadas = jornada.flat().find((j:any) => moment(j.fecha).format('l') === fecha_ayer);
+                    };
+                    const hora_entrada=moment(jornadas?.entrada).hours();
+                    const hora_salida=moment(jornadas?.salida).hours();
+                    const hora_entrada_extra=moment(jornadas?.entrada_horas_extra).hours();
+                    const hora_salida_extra=moment(jornadas?.salida_horas_extra).hours();
+                    if(jornadas){
+                        //Turno mañana
+                        if (emp.turno=="mañana"){
+                            //Calculo de la jornada normal
+                            if(hora_entrada==6 && hora_salida==14){
+                                if (jornadas.feriado)jornadas.horas_diurnas_100+=8  
+                                else jornadas.horas_diurnas+=8
+                            }               
+                            //Calculo de las horas extra 
+                            if (hora_entrada_extra==14 ){
+                                if(jornadas?.feriado){
+                                    if(hora_salida_extra==15)jornadas.horas_diurnas_100+=1;
+                                    if(hora_salida_extra==16)jornadas.horas_diurnas_100+=2;
+                                    if(hora_salida_extra==17)jornadas.horas_diurnas_100+=3;
+                                    if(hora_salida_extra==18)jornadas.horas_diurnas_100+=4;
+                                }else{
+                                    if(hora_salida_extra==15)jornadas.horas_diurnas_50+=1;
+                                    if(hora_salida_extra==16)jornadas.horas_diurnas_50+=2;
+                                    if(hora_salida_extra==17)jornadas.horas_diurnas_50+=3;
+                                    if(hora_salida_extra==18)jornadas.horas_diurnas_50+=4;
+                                }       
+                            }  
                         }
-                        //Jornada extra
-                        if (hora_salida_extra==14 ){
-                            if(jornadas?.feriado){
-                                if(hora_entrada_extra==10)jornadas.horas_diurnas_100+=4;
-                                if(hora_entrada_extra==11)jornadas.horas_diurnas_100+=3;
-                                if(hora_entrada_extra==12)jornadas.horas_diurnas_100+=2;
-                                if(hora_entrada_extra==13)jornadas.horas_diurnas_100+=1;
-                            }else{
-                                if(hora_entrada_extra==10)jornadas.horas_diurnas_50+=4;
-                                if(hora_entrada_extra==11)jornadas.horas_diurnas_50+=3;
-                                if(hora_entrada_extra==12)jornadas.horas_diurnas_50+=2;
-                                if(hora_entrada_extra==13)jornadas.horas_diurnas_50+=1;
-                            }       
-                        }  
-                    }
-                    //Turno noche
-                    if (emp.turno=="noche"){
-                        //Jornada comun
-                        if (hora_entrada==22 && hora_salida==6){
-                            if (jornadas.feriado)jornadas.horas_nocturnas_100+=6,jornadas.horas_nocturnas+=2
-                            else jornadas.horas_nocturnas+=8
+                        //Turno tarde
+                        if (emp.turno=="tarde"){
+                            //Jornada comun
+                            if (hora_entrada==14 && hora_salida==22){
+                                if (jornadas.feriado)jornadas.horas_diurnas_100+=7,jornadas.horas_nocturnas_100+=1
+                                else jornadas.horas_diurnas+=7,jornadas.horas_nocturnas+=1
+                            }
+                            //Jornada extra
+                            if (hora_salida_extra==14 ){
+                                if(jornadas?.feriado){
+                                    if(hora_entrada_extra==10)jornadas.horas_diurnas_100+=4;
+                                    if(hora_entrada_extra==11)jornadas.horas_diurnas_100+=3;
+                                    if(hora_entrada_extra==12)jornadas.horas_diurnas_100+=2;
+                                    if(hora_entrada_extra==13)jornadas.horas_diurnas_100+=1;
+                                }else{
+                                    if(hora_entrada_extra==10)jornadas.horas_diurnas_50+=4;
+                                    if(hora_entrada_extra==11)jornadas.horas_diurnas_50+=3;
+                                    if(hora_entrada_extra==12)jornadas.horas_diurnas_50+=2;
+                                    if(hora_entrada_extra==13)jornadas.horas_diurnas_50+=1;
+                                }       
+                            }  
                         }
-                        //Jornada extra
-                        if (hora_salida_extra==22 ){
-                            if(jornadas?.feriado){
-                                if(hora_entrada_extra==18)jornadas.horas_diurnas_100+=4;
-                                if(hora_entrada_extra==19)jornadas.horas_diurnas_100+=3;
-                                if(hora_entrada_extra==20)jornadas.horas_diurnas_100+=2;
-                                if(hora_entrada_extra==21)jornadas.horas_diurnas_100+=1;
-                            }else{
-                                if(hora_entrada_extra==18)jornadas.horas_diurnas_50+=4;
-                                if(hora_entrada_extra==19)jornadas.horas_diurnas_50+=3;
-                                if(hora_entrada_extra==20)jornadas.horas_diurnas_50+=2;
-                                if(hora_entrada_extra==21)jornadas.horas_diurnas_50+=1;
-                            }       
-                        }  
-                    }
-                    emp.markModified("jornada")
-                    const resultado=await emp.save()   
+                        //Turno noche
+                        if (emp.turno=="noche"){
+                            //Jornada comun
+                            if (hora_entrada==22 && hora_salida==6){
+                                if (jornadas.feriado)jornadas.horas_nocturnas_100+=6,jornadas.horas_nocturnas+=2
+                                else jornadas.horas_nocturnas+=8
+                            }
+                            //Jornada extra
+                            if (hora_salida_extra==22 ){
+                                if(jornadas?.feriado){
+                                    if(hora_entrada_extra==18)jornadas.horas_diurnas_100+=4;
+                                    if(hora_entrada_extra==19)jornadas.horas_diurnas_100+=3;
+                                    if(hora_entrada_extra==20)jornadas.horas_diurnas_100+=2;
+                                    if(hora_entrada_extra==21)jornadas.horas_diurnas_100+=1;
+                                }else{
+                                    if(hora_entrada_extra==18)jornadas.horas_diurnas_50+=4;
+                                    if(hora_entrada_extra==19)jornadas.horas_diurnas_50+=3;
+                                    if(hora_entrada_extra==20)jornadas.horas_diurnas_50+=2;
+                                    if(hora_entrada_extra==21)jornadas.horas_diurnas_50+=1;
+                                }       
+                            }  
+                        }
+                        emp.markModified("jornada")
+                        const resultado=await emp.save()   
                         
                 }
                 
