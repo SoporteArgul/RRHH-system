@@ -137,13 +137,6 @@ export class EmpleadoUseCase{
                 const user=await this.empleadoRepository.updateUser(id,userValue)
                 return user
             }
-            
-            const host=process.env.APP_HOST;
-            const port=process.env.PORT;
-            imagePath=`${host}${port}/${imagePath}`;
-           const userValue=new EmpleadoValue({ legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencia, pais, provincia, ciudad, calle, numero, departamento, piso, codigo_postal, nivel_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto:imagePath})
-           const user=await this.empleadoRepository.updateUser(id,userValue)
-           return user
         }catch(e){
             console.log(e)
            return ERROR
@@ -166,7 +159,7 @@ export class EmpleadoUseCase{
             empleadoId=empleadoId.toString();
             const MOMENTO=["Mañana","Tarde","Noche"];
             const fechaActual=moment().format("YYYY-MM-DD").toString();
-            const horaActual = "14:29:06"
+            const horaActual = moment().toString()
             const horaActualDate = moment(horaActual, 'LTS').toDate();
             let jornadas=null
             const empleado=await this.empleadoRepository.findByLegajo(empleadoId) //buscamos el empleado que queremos modificar
