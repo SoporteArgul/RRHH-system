@@ -4,7 +4,7 @@ import moment from "moment"
 export default async () => {
   try {
     const empleados = await EmpleadoModel.find();
-    const anioActual = moment().add(1,"year").year();
+    const anioActual = moment().year();
     const jornadasAnuales = [];
 
     for (let mes = 0; mes < 12; mes++) {
@@ -16,8 +16,12 @@ export default async () => {
         jornadasMensuales.push({
           fecha,
           feriado: false,
+          suspendido:false,
+          licencia:"",
           entrada: null,
           salida: null,
+          entrada_descanso:null,
+          salida_descanso:null,
           habilitado_horas_extra: false,
           entrada_horas_extra: null,
           salida_horas_extra: null,
@@ -27,6 +31,7 @@ export default async () => {
           horas_nocturnas_50: 0,
           horas_diuras_100: 0,
           horas_nocturnas_100: 0,
+          observaciones:"",
         });
       }
 

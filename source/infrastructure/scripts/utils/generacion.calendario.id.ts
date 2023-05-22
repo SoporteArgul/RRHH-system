@@ -16,6 +16,8 @@ export default async (id:string) => {
         jornadasMensuales.push({
           fecha,
           feriado: false,
+          suspendido:false,
+          licencia:"",
           entrada: null,
           salida: null,
           entrada_descanso:null,
@@ -29,6 +31,7 @@ export default async (id:string) => {
           horas_nocturnas_50: 0,
           horas_diuras_100: 0,
           horas_nocturnas_100: 0,
+          observaciones:"",
         });
       }
 

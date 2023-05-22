@@ -11,8 +11,18 @@ const storage = multer.diskStorage({
     }
   });
 
-const storage2=multer.memoryStorage()
-const upload =multer({ storage: storage });
+
+const maxSize=3*1024 *1024
+const upload =multer({ 
+    storage: storage,
+    // fileFilter(req, file, cb) {
+    //     if(file.mimetype=="image/png" || file.mimetype=="image/jpg" || file.mimetype=="image/jpeg")cb(null,true)
+    //     else cb(null,true)
+    //     return cb(new Error('Only .png, .jpg and .jpeg formate allowed!'));
+    // },
+    limits:{fileSize:maxSize}
+
+   })
 
 
 

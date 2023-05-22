@@ -1,29 +1,38 @@
-import {Categorias,Educacion,Domicilio,Jornadas,Liquidacion} from "./empleado.interface";
+import {Jornadas,Liquidacion} from "./empleado.interface";
 
 export interface EmpleadoEntity{
-    nombre: string,
+    legajo: string,
     apellido: string,
-    edad: number,
+    nombre: string,
     cuil: string,
-    dni: string,
-    sexo: string,
-    legajo: number,
-    email: string,
-    telefono: string,
-    domicilio: Domicilio[],
-    fecha_ingreso:string;
-    fecha_egreso:string;
-    nivel_educacion: Educacion[],
-    activo: boolean,
-    convenio: string,
     contratacion: string,
-    categoria: Categorias[],
+    fecha_ingreso:Date;
     gerencia: string,
     area: string,
     sector: string,
-    puesto: string,
-    rol: string,
-    tipo_liquidacion:string,
+    centro_de_costo:string,
+    convenio: string,
+    categoria: string,
+    dni: string,
+    fecha_nacimiento:string,
+    sexo: string,
+    email: string,
+    telefono: string,
+    telefono_urgencia:string,
+    pais:string,
+    provincia:string,
+    ciudad:string,
+    calle:string,
+    numero:string
+    departamento:string,
+    piso:string;
+    codigo_postal:string,
+    nivel_educacion:string,
+    activo: boolean,
+    fecha_egreso:Date;
+    estado_ambiental:string;
+    examen_preocupacional:string;
+    tipo_liquidacion:string;
     rotacion:string,
     turno:string,
     grupo:string,

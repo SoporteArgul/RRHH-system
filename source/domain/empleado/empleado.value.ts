@@ -1,122 +1,121 @@
 import { EmpleadoEntity } from "./empleado.entity";
-import {Categorias,Educacion,Domicilio,Jornadas,Liquidacion} from "./empleado.interface";
+import {Jornadas,Liquidacion} from "./empleado.interface";
 
 export class EmpleadoValue implements EmpleadoEntity{
-    nombre:string;
-    apellido:string;
-    edad:number;
-    cuil:string;
-    dni:string;
-    sexo:string;
-    legajo:number;
-    email:string;
-    telefono:string;
-    domicilio:Domicilio[];
-    fecha_ingreso:string;
-    fecha_egreso: string;
-    nivel_educacion:Educacion[];
-    activo:boolean;
-    convenio:string;
-    contratacion:string;
-    categoria:Categorias[];
-    gerencia:string;
-    area:string;
-    sector:string;
-    puesto:string;
-    rol:string;
-    tipo_liquidacion: string;
-    rotacion: string;
-    grupo: string;
-    turno: string;
-    jornada:Jornadas[];
-    liquidacion:Liquidacion[];
-    observaciones:string;
-    foto:string;
+    legajo: string;
+    apellido: string
+    nombre: string
+    cuil: string
+    contratacion: string
+    fecha_ingreso:Date
+    gerencia: string
+    area: string
+    sector: string
+    centro_de_costo:string
+    convenio: string
+    categoria: string
+    dni: string
+    fecha_nacimiento:string
+    sexo: string
+    email: string
+    telefono: string
+    telefono_urgencia:string
+    pais:string
+    provincia:string
+    ciudad:string
+    calle:string
+    numero:string
+    departamento:string
+    piso:string
+    codigo_postal:string
+    nivel_educacion:string
+    activo: boolean
+    fecha_egreso:Date;
+    estado_ambiental:string;
+    examen_preocupacional:string;
+    tipo_liquidacion:string;
+    rotacion:string
+    turno:string
+    grupo:string
+    jornada: Jornadas[]
+    liquidacion: Liquidacion[]
+    observaciones: string
+    foto: string
+
     constructor({    
-        nombre,
-        apellido,
-        edad,
-        cuil,
-        dni,
-        sexo,
-        legajo,
-        email,
-        telefono,
-        domicilio,
-        nivel_educacion,
-        fecha_ingreso,
-        fecha_egreso,
-        activo,
-        convenio,
-        contratacion,
-        categoria,
-        gerencia,
-        area,
-        sector,
-        puesto,
-        rol,
-        tipo_liquidacion,
-        rotacion,
-        turno,
-        grupo,
-        jornada,
-        foto,
-        liquidacion,
-        observaciones,
+        legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencia, pais, provincia, ciudad, calle, numero, departamento, piso, codigo_postal, nivel_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto
         }:{    
-        nombre:string;
-        apellido:string;
-        edad:number;
-        cuil:string;
-        dni:string;
-        sexo:string;
-        legajo:number;
-        email:string;
-        telefono:string;
-        domicilio:Domicilio[];
-        fecha_ingreso:string;
-        fecha_egreso:string;
-        nivel_educacion:Educacion[];
-        activo:boolean;
-        convenio:string;
-        contratacion:string;
-        categoria:Categorias[];
-        gerencia:string;
-        area:string;
-        sector:string;
-        puesto:string;
-        rol:string;
-        tipo_liquidacion:string;
-        rotacion:string;
-        turno:string;
-        grupo:string;
-        jornada:Jornadas[];
-        liquidacion:Liquidacion[];
-        observaciones:string;
-        foto:string;
+    legajo: string;
+    apellido: string;
+    nombre: string;
+    cuil: string;
+    contratacion: string;
+    fecha_ingreso:Date
+    gerencia: string;
+    area: string;
+    sector: string;
+    centro_de_costo:string;
+    convenio: string;
+    categoria: string;
+    dni: string;
+    fecha_nacimiento:string;
+    sexo: string;
+    email: string;
+    telefono: string;
+    telefono_urgencia:string;
+    pais:string;
+    provincia:string;
+    ciudad:string;
+    calle:string;
+    numero:string;
+    departamento:string;
+    piso:string;
+    codigo_postal:string;
+    nivel_educacion:string;
+    activo: boolean;
+    fecha_egreso:Date;
+    estado_ambiental:string;
+    examen_preocupacional:string;
+    tipo_liquidacion:string;
+    rotacion:string;
+    turno:string;
+    grupo:string;
+    jornada: Jornadas[];
+    liquidacion: Liquidacion[];
+    observaciones: string;
+    foto: string;
         }){
-            this.nombre=nombre
-            this.apellido=apellido
-            this.edad=edad
-            this.cuil=cuil
-            this.dni=dni
-            this.sexo=sexo
             this.legajo=legajo
-            this.email=email
-            this.telefono=telefono
-            this.domicilio=domicilio
-            this.fecha_ingreso=fecha_ingreso
-            this.fecha_egreso=fecha_egreso
-            this.nivel_educacion=nivel_educacion
-            this.activo=activo
-            this.convenio=convenio
+            this.apellido=apellido
+            this.nombre=nombre
+            this.cuil=cuil
             this.contratacion=contratacion
-            this.categoria=categoria
+            this.fecha_ingreso=fecha_ingreso
             this.gerencia=gerencia
             this.area=area
             this.sector=sector
-            this.puesto=puesto
-            this.rol=rol
+            this.centro_de_costo=centro_de_costo
+            this.convenio=convenio
+            this.categoria=categoria
+            this.dni=dni
+            this.fecha_nacimiento=fecha_nacimiento
+            this.sexo=sexo
+            this.email=email
+            this.telefono=telefono
+            this.telefono_urgencia=telefono_urgencia
+            this.pais=pais
+            this.provincia=provincia
+            this.ciudad=ciudad
+            this.calle=calle
+            this.numero=numero
+            this.departamento=departamento
+            this.piso=piso
+            this.codigo_postal=codigo_postal
+            this.nivel_educacion=nivel_educacion
+            this.activo=activo
+            this.fecha_egreso=fecha_egreso
+            this.estado_ambiental=estado_ambiental
+            this.examen_preocupacional=examen_preocupacional
             this.tipo_liquidacion=tipo_liquidacion
             this.rotacion=rotacion
             this.grupo=grupo

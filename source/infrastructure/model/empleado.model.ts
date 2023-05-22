@@ -1,37 +1,46 @@
 import { Schema, model, Document, Model } from "mongoose"
 import mongoose from "mongoose";
 import "dotenv/config"
-import { Domicilio, Educacion, Categorias, Jornadas as IJornada, Liquidacion as ICalculoHoras } from "../../domain/empleado/empleado.interface";
+import { Jornadas as IJornada, Liquidacion as ICalculoHoras } from "../../domain/empleado/empleado.interface";
 import path from "path";
 
 const MENSAJE: string = "Ingrese un valor que este en las opciones!"
 interface IEmpleado extends Document {
-    nombre: string,
+    legajo: string,
     apellido: string,
-    edad: number,
+    nombre: string,
     cuil: string,
-    dni: string,
-    sexo: string,
-    legajo: number,
-    email: string,
-    telefono: string,
-    domicilio: Domicilio[],
-    fecha_ingreso: string;
-    fecha_egreso: string;
-    nivel_educacion: Educacion[],
-    activo: boolean,
-    convenio: string,
     contratacion: string,
-    categoria: Categorias[],
+    fecha_ingreso: Date;
     gerencia: string,
     area: string,
     sector: string,
-    puesto: string,
-    rol: string,
-    tipo_liquidacion: string,
+    centro_de_costo: string,
+    convenio: string,
+    categoria: string,
+    dni: string,
+    fecha_nacimiento: string,
+    sexo: string,
+    email: string,
+    telefono: string,
+    telefono_urgencia: string,
+    pais: string,
+    provincia: string,
+    ciudad: string,
+    calle: string,
+    numero: string
+    departamento: string,
+    piso: string;
+    codigo_postal: string,
+    nivel_educacion: string,
+    activo: boolean,
+    fecha_egreso: Date;
+    estado_ambiental: string;
+    examen_preocupacional: string;
+    tipo_liquidacion: string;
     rotacion: string,
-    grupo: string,
     turno: string,
+    grupo: string,
     jornada: IJornada[][],
     liquidacion: ICalculoHoras[],
     observaciones: string,
@@ -42,134 +51,31 @@ const EmpleadoSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         auto: true,
     },
-    nombre: {
-        type: String
+    legajo: {
+        type: String,
+        unique: true
     },
     apellido: {
         type: String
     },
-    edad: {
-        type: Number
+    nombre: {
+        type: String
     },
     cuil: {
         type: String,
         unique: true
     },
-    dni: {
+    contratacion: {
         type: String,
-        unique: true
-    },
-    sexo: {
-        type: String,
-        enum: {
-            values: ["Hombre", "Mujer", "Otro"],
-            message: MENSAJE
-        }
-    },
-    legajo: {
-        type: String,
-        unique: true
-    },
-    email: {
-        type: String,
-        unique: true
-    },
-    telefono: {
-        type: String
-    },
-    domicilio: [{
-        pais: {
-            type: String
-        },
-        provincia: {
-            type: String
-        },
-        localidad: {
-            type: String
-        },
-        calle: {
-            type: String
-        },
-        numero: {
-            type: Number
-        }
-    }],
-    nivel_educacion: [{
-        primario: {
-            type: Boolean,
-            default: false
-        },
-        secundario: {
-            type: Boolean,
-            default: false
-        },
-        terciario: {
-            type: Boolean,
-            default: false
-        },
-        universitario: {
-            type: Boolean,
-            default: false
-        },
-        titulo: {
-            type: String
-        }
-    }],
-    activo: {
-        type: Boolean
+        // enum: {
+        //     values: ["eventual", "agencia", "efectivo", "externo"],
+        //     message: MENSAJE
+        // }
     },
     fecha_ingreso: {
         type: Date,
         default: new Date()
     },
-    fecha_egreso: {
-        type: Date || null,
-        default: null
-    },
-    convenio: {
-        type: String,
-        enum: {
-            values: ["Plastico", "Otro"],
-            message: MENSAJE
-        }
-    },
-    contratacion: {
-        type: String,
-        enum: {
-            values: ["Eventual", "Agencia", "Efectivo", "Externo"],
-            message: MENSAJE
-        }
-    },
-    categoria: [{
-        produccion: {
-            type: String,
-            enum: {
-                values: ["Operario", "Auxiliar", "Operador", "Operador Calificado", "Operador Especializado", "Oficial Especializado", null],
-                message: MENSAJE
-            },
-            default: null
-        },
-        mantenimiento: {
-            type: String,
-            enum: {
-                values: ["Medio Oficial Mantenimiento", "Oficial de Mantenimiento", null],
-                message: MENSAJE
-            },
-            default: null
-        },
-        administracion: {
-            type: String,
-            enum: {
-                values: ["Nivel 1", "Nivel 2", "Nivel 3", "Nivel 4", "Nivel 5", "Capataz", "Ayudante de Chofer", "Conductor de Autoelevador", null],
-                message: MENSAJE
-            },
-            default: null
-        },
-        provedor: {
-            type: Boolean,
-            default: false
-        }
-    }],
     gerencia: {
         type: String
     },
@@ -179,57 +85,150 @@ const EmpleadoSchema = new Schema({
     sector: {
         type: String
     },
-    puesto: {
+    centro_de_costo: {
+        type: String || null
+    },
+    convenio: {
+        type: String,
+        // enum: {
+        //     values: ["plastico", "fuera de convenio"],
+        //     message: MENSAJE
+        // }
+    },
+    categoria: {
+        type: String || null,
+        // enum: {
+        //     values: ["operario", "auxiliar", "operador", "operador oalificado", "operador especializado", "oficial especializado","medio oficial mantenimiento", "oficial de mantenimiento","nivel 1", "nivel 2", "nivel 3", "nivel 4", "nivel 5", "capataz", "ayudante de chofer", "conductor de autoelevador","proveedor",null],
+        //     message: MENSAJE
+        // },
+        default: null
+    },
+    dni: {
+        type: String,
+        unique: true
+    },
+    fecha_nacimiento: {
+        type: Date || null
+    },
+    sexo: {
+        type: String,
+        // enum: {
+        //     values: ["H", "M", "O"],
+        //     message: MENSAJE
+        // }
+    },
+    mail: {
+        type: String || null,
+
+    },
+    telefono: {
         type: String
     },
-    rol: {
+    telefono_urgencia: {
+        type: String
+    },
+    pais: {
+        type: String
+    },
+    provincia: {
+        type: String
+    },
+    localidad: {
+        type: String
+    },
+    calle: {
+        type: String
+    },
+    numero: {
+        type: String,
+        require: false
+    },
+    dpto: {
+        type: String
+    },
+    piso: {
+        type: String
+    },
+    codigo_postal: {
+        type: String
+    },
+
+    nivel_educacion: {
+        type: String
+    },
+    activo: {
+        type: Boolean
+    },
+
+    fecha_egreso: {
+        type: Date || null,
+        default: null
+    },
+    estado_ambiental: {
+        type: String
+    },
+    examen_preocupacional: {
         type: String
     },
     tipo_liquidacion: {
         type: String,
-        enum: {
-            values: ["Jornal", "Mensual"],
-            message: MENSAJE
-        }
+        // enum: {
+        //     values: ["Jornal", "Mensual"],
+        //     message: MENSAJE
+        // }
     },
     rotacion: {
         type: String,
-        enum: {
-            values: ["Fijo", "6x1"],
-            message: MENSAJE
-        }
-    },
-    turno: {
-        type: String,
-        enum: {
-            values: ["Mañana", "Tarde", "Noche"],
-            message: MENSAJE
-        },
-        default: "Mañana"
+        // enum: {
+        //     values: ["Fijo", "6x1"],
+        //     message: MENSAJE
+        // }
     },
     grupo: {
         type: String,
-        enum: {
-            values: ["A", "B", "C"],
-            message: MENSAJE,
-        },
+        // enum: {
+        //     values: ["A", "B", "C"],
+        //     message: MENSAJE,
+        // },
         default: "A"
+    },
+    turno: {
+        type: String,
+        // enum: {
+        //     values: ["Mañana", "Tarde", "Noche"],
+        //     message: MENSAJE
+        // },
+        default: "Mañana"
     },
     jornada: [[[{
         fecha: {
             type: Date,
-
         },
         feriado: {
             type: Boolean,
             default: false
-
+        },
+        suspendido: {
+            type: Boolean,
+            default: false
+        },
+        licencia: {
+            type: String,
+            // emun:{
+            //     values:["gremial","art","enfermedad","vacaciones","maternidad","mudanza",
+            //             "nacimiento","examen","fallecimiento familiar","matrimonio","donacion sangre",
+            //             "aislamiento","vacunacion COVID-19","enfermedad justificada","ausente con aviso",
+            //             "ausente sin aviso","suspension","reserva legal de puesto"],
+            //     message:MENSAJE
+            // }
         },
         entrada: {
-            type: Date,
+            type: Date || null,
+            default: null
         },
         salida: {
-            type: Date,
+            type: Date || null || String,
+            default: null
         },
         entrada_descanso: {
             type: Date,
@@ -254,7 +253,6 @@ const EmpleadoSchema = new Schema({
         descanso: {
             type: Boolean,
             default: true
-
         },
         horas_diurnas: {
             type: Number,
@@ -279,9 +277,13 @@ const EmpleadoSchema = new Schema({
         horas_nocturnas_100: {
             type: Number,
             default: 0
+        },
+        observaciones: {
+            type: String,
+
         }
     }]]],
-    liquidacion: [{
+    liquidacion: [[{
         fecha_liquidacion_horas: {
             type: Date,
             default: null
@@ -310,10 +312,32 @@ const EmpleadoSchema = new Schema({
             type: Number,
             default: 0
         },
-
-    }],
+        total_diurna_enfermedad: { type: Number, default: 0 },
+        total_nocturna_enfermedad: { type: Number, default: 0 },
+        total_licencia_gremial: { type: Number, default: 0 },
+        total_diurna_feriado_ley: { type: Number, default: 0 },
+        total_nocturna_feriado_ley: { type: Number, default: 0 },
+        total_accidente: { type: Number, default: 0 },
+        total_vacaciones: { type: Number, default: 0 },
+        total_licencia_maternidad: { type: Number, default: 0 },
+        total_licencia_mudanza: { type: Number, default: 0 },
+        total_licencia_nacimiento: { type: Number, default: 0 },
+        total_ausente_con_aviso: { type: Number, default: 0 },
+        total_ausente_sin_aviso: { type: Number, default: 0 },
+        total_licencia_examen: { type: Number, default: 0 },
+        total_suspension: { type: Number, default: 0 },
+        total_licencia_fallecimiento: { type: Number, default: 0 },
+        total_licencia_matrimonio: { type: Number, default: 0 },
+        total_licencia_donacion_sangre: { type: Number, default: 0 },
+        total_ausencia_enfermadad_injustificada: { type: Number, default: 0 },
+        total_diurna_reserva_legal_puesto: { type: Number, default: 0 },
+        total_nocturna_reserva_legal_puesto: { type: Number, default: 0 },
+        total_licencia_aislamiento: { type: Number, default: 0 },
+        total_licencia_vacunacion: { type: Number, default: 0 },
+    }]],
     observaciones: {
-        type: String
+        type: String,
+        default: "Sin Observaciones"
     },
     foto: {
         type: String,
@@ -326,5 +350,5 @@ const EmpleadoSchema = new Schema({
     });
 
 
-const EmpleadoModel = model<IEmpleado>("empleado.rrhh.ts", EmpleadoSchema)
+const EmpleadoModel = model<IEmpleado>("empleado.rrhh", EmpleadoSchema)
 export default EmpleadoModel

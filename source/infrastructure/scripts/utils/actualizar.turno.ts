@@ -8,9 +8,9 @@ export default async () => {
   
     if (moment().day() === 6) {
       const promesas = empleados.map((empleado) => {
-        if (empleado.turno === "mañana") empleado.turno = "tarde";
-        else if (empleado.turno === "tarde") empleado.turno = "noche";
-        else if (empleado.turno === "noche") empleado.turno = "mañana";
+        if (empleado.turno === "Mañana") empleado.turno = "Tarde";
+        else if (empleado.turno === "Tarde") empleado.turno = "Noche";
+        else if (empleado.turno === "Noche") empleado.turno = "Mañana";
         empleado.markModified("turno");
         return empleado.save();
       });

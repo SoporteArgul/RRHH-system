@@ -1,6 +1,8 @@
+import multer from 'multer';
 import EmpleadoModel from '../model/empleado.model';
+import upload from '../storage/multer';
 import { EmpleadoUseCase } from './../../aplication/empleadoUseCase';
-import { Request,Response } from 'express';
+import { NextFunction, Request,Response } from 'express';
 
 export class EmpleadoController {
   //CONTROLADORES PARA FUNCIONALIDADES USUARIOS
@@ -28,15 +30,13 @@ export class EmpleadoController {
   //CONTROLADOR POST (Registrar un Empleado)
   public insertCtrl= async(req: Request, res: Response):Promise<void>=> {
     try{
+
         let data=req.body;
-        data.nivel_educacion=JSON.parse(req.body.nivel_educacion)
-        data.domicilio=JSON.parse(req.body.domicilio)
-        data.categoria=JSON.parse(req.body.categoria)
         const imagePath=req.file?.path||"";
         const user=await this.userUseCase.registerUser(imagePath,data)
         res.send({user})
     }catch(e){
-        console.log(e)
+
         res.status(500).json({ error: 'Internal server error' });
     }}
   //cargar un ingreso o egreso
@@ -101,8 +101,9 @@ export class EmpleadoController {
   //traemos desde hasta 
   public dateToDate=async(req:Request, res:Response):Promise<void>=>{
   try{
-    const data=req.body
-    const empleado=await this.userUseCase.dateTodate(data)
+    const data=req.body;
+    const legajo=req.params.name;
+    const empleado=await this.userUseCase.dateTodate(data,legajo)
     if (!empleado){
       throw new Error("no se pudo filtrar")
     }else{
@@ -116,9 +117,10 @@ export class EmpleadoController {
   //actualizar cualquier dato del empleado
   public update=async(req:Request,res:Response):Promise<void>=>{
     try{
+      let imagePath=req.file?.path||"";
       const legajo=req.params.name;
       const data=req.body;
-      const empleado=await this.userUseCase.updateUser(legajo,data);
+      const empleado=await this.userUseCase.updateUser(legajo,imagePath,data);
       res.status(200).send({data:empleado,msg:"Empleado actualizado con exito"});
     }catch(e){
       res.status(500).send({msg:"Internal server error!"})
@@ -159,6 +161,16 @@ export class EmpleadoController {
       else res.status(500).send({msg:"Internal server error!"})
     }catch(e){
        res.status(500).send({msg:"Internal server error!"})
+    }
+  }
+  public EliminarCtrl=async(req:Request,res:Response):Promise<void>=>{
+    try{
+      const id=req.params.id;
+      const empleado=await this.userUseCase.deleteUser(id);
+      if (empleado)res.status(200).send({data:empleado,msg:"ok!"});
+      else res.status(500).send({msg:"Internal server error!"})
+    }catch(e){
+      res.status(500).send({msg:"Internal server error!"})
     }
   }
 }

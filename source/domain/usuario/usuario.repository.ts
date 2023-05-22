@@ -6,4 +6,5 @@ export interface UsuarioRepository{
     update(id:string,usuario:User):Promise<any>;
     delete(id:string):Promise<any>;
     list():Promise<any>;
+    listById(id:string):Promise<any>;
 }

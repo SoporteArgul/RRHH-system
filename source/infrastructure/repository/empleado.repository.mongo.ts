@@ -3,7 +3,7 @@ import { EmpleadoRepository } from "../../domain/empleado/empleado.repository";
 import EmpleadoModel from "../model/empleado.model";
 import generacion_calendario from "../scripts/utils/generacion.calendario.id"
 import moment from "moment-timezone";
-import generacion_liquidacion from"../scripts/utils/liquidacion.quincenal"
+import generacion_liquidacion from"../scripts/utils/generacion.liquidacion.id"
 import buscarFecha from "../scripts/utils/buscar.fecha";
 
 
@@ -16,7 +16,6 @@ export class MongoRepository implements EmpleadoRepository{
             generacion_liquidacion(user._id.toString())
             return user
         }catch(e){
-            console.log(e)
             console.log("Error de repositorio")
         }
     }
@@ -140,7 +139,7 @@ export class MongoRepository implements EmpleadoRepository{
             console.log("Error de repositorio")
         }
     }
-    async dateToDate(data: Date[]): Promise<any> {
+    async dateToDate(data: Date[],legajo:string): Promise<any> {
         try{
             const fechaInicio=new Date(data[0]);
             const fechaFin=new Date(data[1]);
@@ -149,7 +148,7 @@ export class MongoRepository implements EmpleadoRepository{
                 { $unwind: "$jornada" },
                 { $unwind: "$jornada" },
                 { $match: { "jornada.fecha": { $gte: fechaInicio, $lte: fechaFin } } },
-                { $match: { "rotacion": "6x1" } },
+                { $match: { "legajo": legajo } },
                 {
                   $group: {
                     _id: "$_id",

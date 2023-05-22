@@ -2,7 +2,7 @@ import { Schema,model } from "mongoose"
 
 const ERROR="Error de validacion en el modelo!"
 
-export function Modelo(){
+
 const UsuarioSchema=new Schema({
     nombre:{
         type:String,
@@ -27,8 +27,6 @@ const UsuarioSchema=new Schema({
             message:["elige un usario valido!"]
         },
         default:"Administrador",
-
-
     },
     email:{
         type:String,
@@ -37,7 +35,7 @@ const UsuarioSchema=new Schema({
         maxLength: [150, "La cantidad maxima de caracteres es 150!"],
         minLength:[2,"Al menos debe contener 2 caracteres!"],
         validate: {
-           validator: function(v:string) {
+           validator:(v:string)=>{
               return /\S+@\S+\.\S+/.test(v);
             },
            message:`No es una direccion de email valida!`}
@@ -49,8 +47,18 @@ const UsuarioSchema=new Schema({
         minLength:[8,"Al menos debe contener 8 caracteres!"],
     }
 
-})
-const UserModel=model("usuario.ts",UsuarioSchema);
-return UserModel
+},
+{
+    timestamps: true,
+    versionKey: false
+ })
 
-}
+UsuarioSchema.methods.toJSON =function(){
+    let user = this;
+    let userObject = user.toObject();
+    delete userObject.password;
+    return userObject;
+ }
+const UserModel=model("usuario.ts",UsuarioSchema);
+export default UserModel;
+

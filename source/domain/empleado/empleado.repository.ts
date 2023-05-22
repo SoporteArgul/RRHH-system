@@ -15,7 +15,7 @@ export interface EmpleadoRepository{
     listByRotation():Promise<any>;
     listByArea():Promise<any>;
     listBySearch(query:Array<JSON>):Promise<any>;
-    dateToDate(data:Array<Date>):Promise<any>;
+    dateToDate(data:Array<Date>,legajo:string):Promise<any>;
     report():Promise<any>;
     findByLegajo(legajo:string):Promise<any>;
     findByLegajo2(legajo:string):Promise<any>;
