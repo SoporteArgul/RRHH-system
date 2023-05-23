@@ -9,7 +9,9 @@ import path from "path";
 import bodyParser from "body-parser";
 import { rateLimit } from "express-rate-limit";
 import usuarioRoute from "./source/infrastructure/routes/usuario.route"
-import hpp from "hpp";
+import fs from "node:fs"
+import https from "http"
+import { ServerOptions } from "https";
 
 const app = express();
 const port = process.env.PORT || 5001;
@@ -40,5 +42,9 @@ dbInit().then();
 //-------------------------------------
 
 //-----------START-APP-----------------
-app.listen(port, () => console.log(`API, Listo por el puerto ${port}`));
+const options:ServerOptions={
+    cert: fs.readFileSync("face.crt"),
+    key:fs.readFileSync("face.key")
+}
+https.createServer(options,app).listen(port, () => console.log(`API, Listo por el puerto ${port}`));
 //-------------------------------------

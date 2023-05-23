@@ -166,9 +166,7 @@ export class EmpleadoUseCase{
             if (empleado) {
                 //verificamos que este el empleado
                 jornadas=buscarFecha(empleado.jornada,fechaActual)
-                
                 if (jornadas && jornadas.suspendido==false && empleado.activo==true ){
-
                 //ENTRADA
                 if (jornadas.entrada==null && !jornadas.habilitado_horas_extra){
                     if (empleado.turno ==MOMENTO[0] && (horaActual>="05:00:00" && horaActual<="06:45:00")){  
