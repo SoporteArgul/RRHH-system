@@ -1,14 +1,10 @@
 import { EmpleadoEntity } from "./empleado.entity";
 
-
-
 export interface EmpleadoRepository{
     
     //POST
     registerUser(imagePath:string,user?:EmpleadoEntity):Promise<any>;
     login(email:string):Promise<any>;
-    sendMail():Promise<any>;
-
     //GET
     listUser():Promise<any>;
     listByGroup(group:string):Promise<any>;
@@ -21,11 +17,8 @@ export interface EmpleadoRepository{
     findByLegajo2(legajo:string):Promise<any>;
     //DELETE
     deleteUser(id:string):Promise<any>;
-
-    //UPDATE
+    //PUT
     saveChangesJornada(jornadas:any):Promise<any>;
-    updateExtraHours(id:string,data:Array<Date>):Promise<any>;
-    updateDailyHours():Promise<any>;
     updateUser(id:string,data:EmpleadoEntity):Promise<any>;
     
     

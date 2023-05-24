@@ -42,7 +42,7 @@ export class EmpleadoController {
   //cargar un ingreso o egreso
   public uploadHoursCtrl=async(req:Request,res:Response):Promise<void>=>{
   try{
-    const id=req.params.id;
+    const id=req.params.name;
     const data=req.body;
     const user=await this.userUseCase.uploadExtraHours(id,data)
     res.status(200).send({data:user,msg:"Horas adicionales cargadas con exito!"});
@@ -88,16 +88,7 @@ export class EmpleadoController {
   } catch (e) {
       res.status(500).send({ error: 'Internal server error' });
   }}
-  //todavia no funciona
-  public updateDailyHoursCtrl=async(req:Request,res:Response)=>{
-    try{
-      const empleado=await this.userUseCase.updateDailyHours()
-      if (!empleado)res.status(500).send("no se pudo actualizar las horas diarias")
-      res.status(200).send({msg:"Datos actualizados con exito"})
-    }catch(e){
-      res.status(500).send({ message: 'Internal server error' });
-    }
-  }
+
   //traemos desde hasta 
   public dateToDate=async(req:Request, res:Response):Promise<void>=>{
   try{

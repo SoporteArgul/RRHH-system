@@ -28,7 +28,7 @@ route.get(`${api}/activar/:name`,checkAuth,empleadoCtrl.activeCtrl);
 route.get(`${api}/listar/legajo/:name`,checkAuth,empleadoCtrl.legajoCtrl);
 //PUT
 route.put(`${api}/fichar/:name`,empleadoCtrl.clockingCtrl);
-route.put(`${api}/cargar/:id`,checkAuth,empleadoCtrl.uploadHoursCtrl);
+route.put(`${api}/cargar/:name`,checkAuth,empleadoCtrl.uploadHoursCtrl);
 route.put(`${api}/actualizar/:name`,upload.single("image"),checkAuth,empleadoCtrl.update);
 route.put(`${api}/habilitar/:name`,checkAuth,empleadoCtrl.searchDayAndUpdate);
 //DELETE

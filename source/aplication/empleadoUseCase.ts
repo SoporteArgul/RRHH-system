@@ -1,6 +1,5 @@
 import  { EmpleadoValue }  from '../domain/empleado/empleado.value';
 import { EmpleadoRepository } from "../domain/empleado/empleado.repository"
-import { encrypt } from '../infrastructure/helpers/handleByCrypt';
 import {Jornadas, Liquidacion} from "../domain/empleado/empleado.interface";
 import moment from 'moment-timezone';
 import buscarFecha from '../infrastructure/scripts/utils/buscar.fecha';
@@ -159,7 +158,7 @@ export class EmpleadoUseCase{
             empleadoId=empleadoId.toString();
             const MOMENTO=["Mañana","Tarde","Noche"];
             const fechaActual=moment().format("YYYY-MM-DD").toString();
-            const horaActual = moment().toString()
+            const horaActual = new Date().toLocaleTimeString('es-AR', { hour12: false });
             const horaActualDate = moment(horaActual, 'LTS').toDate();
             let jornadas=null
             const empleado=await this.empleadoRepository.findByLegajo(empleadoId) //buscamos el empleado que queremos modificar
@@ -323,11 +322,42 @@ export class EmpleadoUseCase{
             return ERROR
         }}
     //CARGAR FICHADA MANUAL
-    public uploadExtraHours=async(id:string,data:Array<Date>)=>{
+    public uploadExtraHours=async(id:string,data:Array<Date|string>)=>{
         try{
-            const user=await this.empleadoRepository.updateExtraHours(id,data)
+            //esta va a ser una funcionalidad para los administradores donde van a poder cargar 
+            //jornadas y horas extras que no se hayan cargado
+            const e=moment(data[2]).toDate()
+            const s=moment(data[3]).toDate()
+            const empleado=await this.empleadoRepository.findByLegajo(id)
+            let jornadas=null
+            //verificamos que exista empleado y que estemos recibiendo la data a actualizar
+            if (empleado && data){
+                //buscamos el la jornada que queremos cargar, si existe entra y modifica 
+                //sino nos va a lanzar un error
+                jornadas=buscarFecha(empleado.jornada,moment(data[1]))
+                if (jornadas && data[0]=="normal"&& (e instanceof Date && s instanceof Date != null) ){
+                    jornadas.entrada=e;
+                    jornadas.salida=s;
+                    const resultado=await this.empleadoRepository.saveChangesJornada(empleado)
+                    return resultado
+                }
+                if (jornadas && data[0]=="extra" && (e instanceof Date && s instanceof Date != null)){
+                    jornadas.entrada_horas_extra=e;
+                    jornadas.salida_horas_extra=s;
+                    const resultado=await this.empleadoRepository.saveChangesJornada(empleado)
+                    return resultado
+                };
+                if(jornadas && data[0]=="licencia"){
+                    jornadas.licencia=data[2];
+                    const resultado=await this.empleadoRepository.saveChangesJornada(empleado)
+                    return resultado
+                }
+                
+            }else{
+               return ERROR
+            };
         }catch(e){
-           return ERROR
+            return ERROR
         }
     }
     //VER FICHADA DESDE HASTA
@@ -339,15 +369,7 @@ export class EmpleadoUseCase{
             return ERROR
         }
     }
-    //NO ESTA EN FUNCIONAMIENTO!
-    public updateDailyHours=async()=>{
-        try{
-            const user=await this.empleadoRepository.updateDailyHours()
-            return user
-        }catch(e){
-           return ERROR
-        }
-    }
+
     //BUSQUEDA
     public listBySearch=async(match:any)=>{
        try{

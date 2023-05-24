@@ -1,19 +1,41 @@
 import EmpleadoModel from "../../model/empleado.model";
 import moment from "moment";
-import jornadaComun from "../../helpers/acumulador50"
 import writeExcelFile from 'write-excel-file/node'
 
-//{jornada:{$elemMatch: { $elemMatch: { $elemMatch: { fecha: { $eq: fechaActual } } } } } }
 export default async()=>{
+  
+  let motivos=[,
+    "diurna enfermedad",
+    "nocturna enfermedad",
+    "licencia gremial",
+    "diurna feriado ley",
+    "nocturna feriado ley",
+    "accidente",
+    "vacaciones",
+    "licencia maternidad",
+    "licencia mudanza",
+    "licencia nacimiento",
+    "ausente con aviso",
+    "ausente sin aviso",
+    "licencia examen",
+    "suspension",
+    "licencia fallecimiento",
+    "licencia matrimonio",
+    "licencia donacion sangre",
+    "ausencia enfermadad injustificada",
+    "diurna reserva legal puesto",
+    "nocturna reserva legal puesto",
+    "licencia aislamiento",
+    "licencia vacunacion",
+  ]
+  
   const hoy = moment().date(15);
   let fechaInicio, fechaFin:any;
   
   if (hoy <= moment().date(15)) {
-    // Hoy es 1-15 del mes
-    fechaInicio = moment().date(1).toDate();
+    fechaInicio = moment().date(0).toDate();
     fechaFin = moment().date(15).toDate();
   } else {
-    // Hoy es 16-fin de mes
     fechaInicio = moment().date(16).toDate();
     fechaFin = moment().endOf('month').toDate();
   }
@@ -22,21 +44,15 @@ export default async()=>{
       { $unwind: "$jornada" },
       { $unwind: "$jornada" },
       { $match: { "jornada.fecha": { $gte: fechaInicio, $lte: fechaFin } } },
-      { $match: { "rotacion": "6x1" } },
+      { $match: { "tipo_liquidacion": { $in: ["jornal", "jornal nacion"] }  } },
       {
         $group: {
           _id: "$_id",
           nombre: { $first: "$nombre" },
           apellido: { $first: "$apellido" },
-          edad: { $first: "$edad" },
           legajo: { $first: "$legajo" },
-          email: { $first: "$email" },
-          liquidacion_mensual: { $first: "$liquidacion_mensual" },
-          liquidacion_jornal: { $first: "$liquidacion_jornal" },
-          rotacion: { $first: "$rotacion" },
-          grupo: { $first: "$grupo" },
+          tipo_liquidacion:{ $first:"$tipo_liquidacion"},
           jornada: { $push: "$jornada" },
-          total_horas_trabajadas:{$first:"$total_horas_trabajadas"}
         }
       },
       {
@@ -44,17 +60,12 @@ export default async()=>{
           _id: 1,
           nombre: 1,
           apellido: 1,
-          edad: 1,
           legajo: 1,
-          email: 1,
-          liquidacion_mensual: 1,
-          liquidacion_jornal: 1,
+          tipo_liquidacion:1,
           jornada:1,
-          rotacion: 1,
-          grupo: 1,
-          total_horas_trabajadas: 1
         }
-      }
+      },
+      { $sort: { legajo: 1 } }
     ]);
   
 
@@ -97,50 +108,74 @@ export default async()=>{
     {value:"Nocturna Reserva Legal de Puesto",fontWeight: 'bold'},
     {value:"Licencia Aislamiento",fontWeight: 'bold'},
     {value:"Licencia Vacunacion COVID",fontWeight: 'bold'},
-    {value:"hs Adicionales 50% Diurnas",fontWeight: 'bold'},
-    {value:"hs Adicionales 50% Nocturnas",fontWeight: 'bold'},
-    {value:"hs Adicionales 100% Diurnas",fontWeight: 'bold'},
-    {value:"hs Adicionales 100% Nocturnas",fontWeight: 'bold'},
-    {value:"Vacaciones trabajadas Diurnas",fontWeight: 'bold'},
-    {value:"Vacaciones Trabajadas Nocturnas",fontWeight: 'bold'},
-    {value:"hs Guardia(Hs 100%)",fontWeight: 'bold'}
   ];
       
-      let ing_esperado="";
-      let egr_esperado="";
-      let objeto:any=[];
-      let rows:any=[];
-      let data:Array<Array<Object>>=[]
+  let ing_esperado="";
+  let egr_esperado="";
+  let data:Array<Array<Object>>=[]
+  data.push(HEADER_ROWS)
+  empleados.forEach((empleado)=>{
+  empleado.jornada.forEach((emp:any)=>{
+      if (moment(emp.entrada).hours()==6)ing_esperado="06:00:00",egr_esperado="14:00:00";
+      if (moment(emp.entrada).hours()==14)ing_esperado="14:00:00",egr_esperado="22:00:00";
+      if (moment(emp.entrada).hours()==22)ing_esperado="22:00:00",egr_esperado="14:00:00";
+      if (emp.entrada==null)ing_esperado="00:00:00",egr_esperado="00:00:00";
+      let entrada;
+      let salida;      
+      let licencia=0;
+      if (emp.entrada!=null)entrada = new Date(emp.entrada.getTime() - (3 * 60 * 60 * 1000)); // Resta 3 horas
+      if(emp.salida!=null)salida = new Date(emp.salida.getTime() - (3 * 60 * 60 * 1000));
+        
+      
 
-      data.push(HEADER_ROWS)
-      empleados.forEach((empleado)=>{
-      empleado.jornada.forEach((emp:any)=>{
-        if (moment(emp.entrada).hours()==6)ing_esperado="06:00",egr_esperado="14:00";
-          if (moment(emp.entrada).hours()==14)ing_esperado="14:00",egr_esperado="22:00";
-          if (moment(emp.entrada).hours()==22)ing_esperado="22:00",egr_esperado="14:00";
-          if (emp.entrada==null)ing_esperado="00:00:00",egr_esperado="00:00:00";
-          let entrada;
-          let salida;
-          if (emp.entrada!=null) {
-            entrada = new Date(emp.entrada.getTime() - (3 * 60 * 60 * 1000)); // Resta 3 horas en milisegundos
-          };
-          if(emp.salida!=null){
-            salida = new Date(emp.salida.getTime() - (3 * 60 * 60 * 1000));
-          };
-          
-         
-          let DATA_ROW=[{type:Number,value:empleado.legajo, alignVertical:"center"},
-                        {type:String,value:empleado.nombre.concat(empleado.apellido)},
-                        {type:Date,value:emp.fecha,format: 'yyyy-mm-dd'},
-                        {type:String,value:ing_esperado},
-                        {type:String,value:egr_esperado},
-                        {type:Date,value:entrada,format: 'hh:mm:ss'},
-                        {type:Date,value:salida,format: 'hh:mm:ss'}]
-          data.push(DATA_ROW)
-      })
+      // for(let i of motivos){
+      //   if(emp.licencia==i)licencia+=8;
+      // }
+      let DATA_ROW=[{type:String,value:empleado.legajo, alignVertical:"center"},
+                    {type:String,value:empleado.nombre.concat(empleado.apellido)},
+                    {type:Date,value:emp.fecha,format: 'yyyy-mm-dd'},
+                    {type:String,value:ing_esperado},
+                    {type:String,value:egr_esperado},
+                    {type:Date,value:entrada,format: 'hh:mm:ss'},
+                    {type:Date,value:salida,format: 'hh:mm:ss'},
+                    {type:Number,value:emp.horas_diurnas},
+                    {type:Number,value:emp.horas_nocturnas},
+                    {type:String,value:emp.observaciones},
+                    {type:Number,value:emp.horas_diurnas_100},
+                    {type:Number,value:emp.horas_nocturnas_100},
+                    {type:Number,value:emp.horas_diurnas_50},
+                    {type:Number,value:emp.horas_nocturnas_50},
+                    {type:Number,value:emp.horas_diurnas_100},
+                    {type:Number,value:emp.horas_nocturnas_100},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                    {type:Number,value:licencia},
+                  ]
+      data.push(DATA_ROW)
+  })
   })
  
-  writeExcelFile(data,{filePath:"/pruebas/reporte2.xlsx"})
+  writeExcelFile(data,{filePath:"/pruebas/reporte3.xlsx"})
   .then(() => {
     console.log('Archivo de Excel creado');
   })
