@@ -27,19 +27,19 @@ class APP{
     private startServer(){
       try{
         //configuraciones
-        this.express=express();
+        const app=express();
         const port = process.env.PORT || 5001;
-        this.express.use(express.json());
-        this.express.disable('x-powered-by')
-        this.express.use(limiter);
-        this.express.use(bodyParser.json({limit: '50mb'}));
-        this.express.use(bodyParser.urlencoded({limit:'50mb', extended: true}));
-        this.express.use(express.urlencoded({ extended: false }));
-        this.express.use(cors({origin: '*',methods: ['POST','PUT','GET','DELETE'],allowedHeaders: ['Content-Type','Authorization'],}));
-        this.express.use(morgan('dev'));
-        this.express.use(UserRoute);
-        this.express.use(usuarioRoute);
-        this.express.use(`/uploads`,express.static(path.join(__dirname,"uploads")))
+        app.use(express.json());
+        app.disable('x-powered-by')
+        app.use(limiter);
+        app.use(bodyParser.json({limit: '50mb'}));
+        app.use(bodyParser.urlencoded({limit:'50mb', extended: true}));
+        app.use(express.urlencoded({ extended: false }));
+        app.use(cors({origin: '*',methods: ['POST','PUT','GET','DELETE'],allowedHeaders: ['Content-Type','Authorization'],}));
+        app.use(morgan('dev'));
+        app.use(UserRoute);
+        app.use(usuarioRoute);
+        app.use(`/uploads`,express.static(path.join(__dirname,"uploads")))
         //scripts y db
         tareas().then();  
         dbInit().then();
@@ -49,8 +49,7 @@ class APP{
           cert:fs.readFileSync("./cert.pem")
         }
         const server=https.createServer(options,(req:IncomingMessage,res:ServerResponse)=>{
-          res.end("SSL ADDED")
-          this.express
+          app
         });
         server.listen(port)
         console.log(`API lista!\nURL:${process.env.APP_HOST}${port}`)
