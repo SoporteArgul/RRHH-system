@@ -1,3 +1,4 @@
+import { ServerOptions } from 'https';
 import  express  from "express";
 import "dotenv/config"
 import cors from "cors"
@@ -10,41 +11,86 @@ import bodyParser from "body-parser";
 import { rateLimit } from "express-rate-limit";
 import usuarioRoute from "./source/infrastructure/routes/usuario.route"
 import fs from "node:fs"
-import https from "http"
-import { ServerOptions } from "https";
+import https from "https"
+import { IncomingMessage, ServerResponse } from 'http';
 
-const app = express();
-const port = process.env.PORT || 5001;
+
 const limiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 5 minutes
-                max: 300, 
-  });
+  windowMs: 1 * 60 * 1000, // 5 minutes
+              max: 300, 
+});
+class APP{
+    public express:any
+    constructor(){
+      this.startServer();
+    }
+    private startServer(){
+      try{
+        //configuraciones
+        this.express=express();
+        const port = process.env.PORT || 5001;
+        this.express.use(express.json());
+        this.express.disable('x-powered-by')
+        this.express.use(limiter);
+        this.express.use(bodyParser.json({limit: '50mb'}));
+        this.express.use(bodyParser.urlencoded({limit:'50mb', extended: true}));
+        this.express.use(express.urlencoded({ extended: false }));
+        this.express.use(cors({origin: '*',methods: ['POST','PUT','GET','DELETE'],allowedHeaders: ['Content-Type','Authorization'],}));
+        this.express.use(morgan('dev'));
+        this.express.use(UserRoute);
+        this.express.use(usuarioRoute);
+        this.express.use(`/uploads`,express.static(path.join(__dirname,"uploads")))
+        //scripts y db
+        tareas().then();  
+        dbInit().then();
+        //server
+        const options:ServerOptions={
+          key:fs.readFileSync("./key-rsa.pem"),
+          cert:fs.readFileSync("./cert.pem")
+        }
+        const server=https.createServer(options,(req:IncomingMessage,res:ServerResponse)=>{
+          res.end("SSL ADDED")
+          this.express
+        });
+        server.listen(port)
+        console.log(`API lista!\nURL:${process.env.APP_HOST}${port}`)
+      }catch(e){
+          console.log("Internal server error!")
+          process.exit();
+      }
+     
+      
+    }
+
+}
+
+const app= new APP()
+app
+
+
+
+
+
+
+
+
+
+
+
 //-----Configuraciones de Express------
-app.use(express.json());
-app.disable('x-powered-by')
-app.use(limiter);
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit:'50mb', extended: true}));
-app.use(express.urlencoded({ extended: false }));
-app.use(cors({origin: '*',methods: ['POST','PUT','GET','DELETE'],allowedHeaders: ['Content-Type','Authorization'],}));
-app.use(morgan('dev'));
-app.use(UserRoute);
-app.use(usuarioRoute);
-app.use(`/uploads`,express.static(path.join(__dirname,"uploads")))
+
 //-------------------------------------
 
 //--------Ejecucion de tareas----------
-tareas().then()                                                                                                                
+                                                                                                              
 //-------------------------------------
 
 //------Base de datos (conector)-------
-dbInit().then();
+
 //-------------------------------------
 
 //-----------START-APP-----------------
-const options:ServerOptions={
-    cert: fs.readFileSync("face.crt"),
-    key:fs.readFileSync("face.key")
-}
-https.createServer(options,app).listen(port, () => console.log(`API, Listo por el puerto ${port}`));
+
+
+
 //-------------------------------------
