@@ -13,6 +13,7 @@ import usuarioRoute from "./source/infrastructure/routes/usuario.route"
 import fs from "node:fs"
 import https from "https"
 import { IncomingMessage, ServerResponse } from 'http';
+import { Application } from 'express-serve-static-core';
 
 
 const limiter = rateLimit({
@@ -20,14 +21,14 @@ const limiter = rateLimit({
               max: 300, 
 });
 class APP{
-    public express:any
+    
     constructor(){
       this.startServer();
     }
     private startServer(){
       try{
         //configuraciones
-        const app=express();
+        const app=express()
         const port = process.env.PORT || 5001;
         app.use(express.json());
         app.disable('x-powered-by')
@@ -48,12 +49,12 @@ class APP{
           key:fs.readFileSync("./key-rsa.pem"),
           cert:fs.readFileSync("./cert.pem")
         }
-        const server=https.createServer(options,(req:IncomingMessage,res:ServerResponse)=>{
-          app
-        });
+        const server=https.createServer(options,app);
         server.listen(port)
         console.log(`API lista!\nURL:${process.env.APP_HOST}${port}`)
       }catch(e){
+        console.log(e)
+
           console.log("Internal server error!")
           process.exit();
       }
