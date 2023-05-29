@@ -5,6 +5,7 @@ import moment from 'moment-timezone';
 import buscarFecha from '../infrastructure/scripts/utils/buscar.fecha';
 import "dotenv/config"
 import resizeImage from '../infrastructure/storage/sharp';
+import writeExcelFile from 'write-excel-file/node'
 
 
 const ERROR="Error, vuelva a intentar mas tarde"
@@ -151,11 +152,8 @@ export class EmpleadoUseCase{
         }};
     
     //FICHADA USUARIO
-    public clockingUser=async(empleadoId:string,data:Array<string>)=>{
+    public clockingUser=async(empleadoId:string)=>{
         try{
-            moment.locale('es');
-            moment.tz.setDefault('America/Argentina/Buenos_Aires');
-            empleadoId=empleadoId.toString();
             const MOMENTO=["Mañana","Tarde","Noche"];
             const fechaActual=moment().format("YYYY-MM-DD").toString();
             const horaActual = new Date().toLocaleTimeString('es-AR', { hour12: false });
@@ -163,6 +161,9 @@ export class EmpleadoUseCase{
             let jornadas=null
             const empleado=await this.empleadoRepository.findByLegajo(empleadoId) //buscamos el empleado que queremos modificar
             if (empleado) {
+        
+
+
                 //verificamos que este el empleado
                 jornadas=buscarFecha(empleado.jornada,fechaActual)
                 if (jornadas && jornadas.suspendido==false && empleado.activo==true ){
@@ -178,7 +179,7 @@ export class EmpleadoUseCase{
                         const resultado=await this.empleadoRepository.saveChangesJornada(empleado)
                         return resultado;
                     }
-                    if (empleado.turno ==MOMENTO[2]&& (horaActual>="21:00:00"&& horaActual<="22:45:00")){
+                    if (empleado.turno==MOMENTO[2]&& (horaActual>="21:00:00"&& horaActual<="22:45:00")){
                         jornadas.entrada=horaActualDate
                         const resultado=await this.empleadoRepository.saveChangesJornada(empleado)
                         return resultado;
@@ -415,6 +416,113 @@ export class EmpleadoUseCase{
             if(empleado)return empleado;
         }catch{
             return ERROR;
+        }
+    }
+    public report=async()=>{
+        try{
+            const empleados=await this.empleadoRepository.report()
+            let HEADER_ROWS=[
+                {value:"Legajo",fontWeight: 'bold'},
+                {value:"Nombre",fontWeight: 'bold'},
+                {value:"Fecha",fontWeight: 'bold'},
+                {value:"Hora Ingreso esperado",fontWeight: 'bold'},
+                {value:"Hora Egreso esperado",fontWeight: 'bold'},
+                {value:"Hora Ingreso",fontWeight: 'bold'},
+                {value:"Hora Egreso",fontWeight: 'bold'},
+                {value:"Hs Diurna",fontWeight: 'bold'},
+                {value:"Hs Nocturna",fontWeight: 'bold'},
+                {value:"Observaciones",fontWeight: 'bold'},
+                {value:"Diurna Feriado",fontWeight: 'bold'},
+                {value:"Nocturna Feriado",fontWeight: 'bold'},
+                {value:"HHEE Diurna 50%",fontWeight: 'bold'},
+                {value:"HHEE Nocturna 50%",fontWeight: 'bold'},
+                {value:"HHEE Diurna 100%",fontWeight: 'bold'},
+                {value:"HHEE Nocturna 100%",fontWeight: 'bold'},
+                {value:"Diurna Enfermedad",fontWeight: 'bold'},
+                {value:"Nocturna Enfermedad",fontWeight: 'bold'},
+                {value:"Licencia Gremial",fontWeight: 'bold'},
+                {value:"Diurna Feriado Ley",fontWeight: 'bold'},
+                {value:"Accidente",fontWeight: 'bold'},
+                {value:"Vacaciones",fontWeight: 'bold'},
+                {value:"Licencia Maternidad",fontWeight: 'bold'},
+                {value:"Licencia Mudanza",fontWeight: 'bold'},
+                {value:"Licencia Nacimiento",fontWeight: 'bold'},
+                {value:"Ausente con Aviso",fontWeight: 'bold'},
+                {value:"Ausente sin Aviso",fontWeight: 'bold'},
+                {value:"Licencia Examen",fontWeight: 'bold'},
+                {value:"Suspension",fontWeight: 'bold'},
+                {value:"Licencia Fallecimiento",fontWeight: 'bold'},
+                {value:"Licencia Matrimonio",fontWeight: 'bold'},
+                {value:"Licencia Donacion de Sangre",fontWeight: 'bold'},
+                {value:"Ausencia Enfermedad Injustificada",fontWeight: 'bold'},
+                {value:"Diurna Reserva Legal de Puesto",fontWeight: 'bold'},
+                {value:"Nocturna Reserva Legal de Puesto",fontWeight: 'bold'},
+                {value:"Licencia Aislamiento",fontWeight: 'bold'},
+                {value:"Licencia Vacunacion COVID",fontWeight: 'bold'},
+              ];
+                  
+              let ing_esperado="";
+              let egr_esperado="";
+              let data:Array<Array<Object>>=[]
+              data.push(HEADER_ROWS)
+              empleados.forEach((empleado:any)=>{
+              empleado.jornada.forEach((emp:any)=>{
+                  if (moment(emp.entrada).hours()==6)ing_esperado="06:00:00",egr_esperado="14:00:00";
+                  if (moment(emp.entrada).hours()==14)ing_esperado="14:00:00",egr_esperado="22:00:00";
+                  if (moment(emp.entrada).hours()==22)ing_esperado="22:00:00",egr_esperado="14:00:00";
+                  if (emp.entrada==null)ing_esperado="00:00:00",egr_esperado="00:00:00";
+                  let entrada;
+                  let salida;      
+                  let licencia=0;
+                  if (emp.entrada!=null)entrada = new Date(emp.entrada.getTime() - (3 * 60 * 60 * 1000)); // Resta 3 horas
+                  if(emp.salida!=null)salida = new Date(emp.salida.getTime() - (3 * 60 * 60 * 1000));
+                  let DATA_ROW=[{type:String,value:empleado.legajo, alignVertical:"center"},
+                                {type:String,value:empleado.nombre.concat(empleado.apellido)},
+                                {type:Date,value:emp.fecha,format: 'yyyy-mm-dd'},
+                                {type:String,value:ing_esperado},
+                                {type:String,value:egr_esperado},
+                                {type:Date,value:entrada,format: 'hh:mm:ss'},
+                                {type:Date,value:salida,format: 'hh:mm:ss'},
+                                {type:Number,value:emp.horas_diurnas},
+                                {type:Number,value:emp.horas_nocturnas},
+                                {type:String,value:emp.observaciones},
+                                {type:Number,value:emp.horas_diurnas_100},
+                                {type:Number,value:emp.horas_nocturnas_100},
+                                {type:Number,value:emp.horas_diurnas_50},
+                                {type:Number,value:emp.horas_nocturnas_50},
+                                {type:Number,value:emp.horas_diurnas_100},
+                                {type:Number,value:emp.horas_nocturnas_100},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                                {type:Number,value:licencia},
+                              ]
+                  data.push(DATA_ROW)
+              })
+              })
+            return data 
+
+        }catch(e){
+            return ERROR
         }
     }
 

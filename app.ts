@@ -53,8 +53,7 @@ class APP{
         server.listen(port)
         console.log(`API lista!\nURL:${process.env.APP_HOST}${port}`)
       }catch(e){
-        console.log(e)
-
+          console.log(e)
           console.log("Internal server error!")
           process.exit();
       }

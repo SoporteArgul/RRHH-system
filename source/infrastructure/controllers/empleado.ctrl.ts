@@ -3,165 +3,160 @@ import EmpleadoModel from '../model/empleado.model';
 import upload from '../storage/multer';
 import { EmpleadoUseCase } from './../../aplication/empleadoUseCase';
 import { NextFunction, Request,Response } from 'express';
+import { HttpResponse } from '../response/https.res';
 
 export class EmpleadoController {
   //CONTROLADORES PARA FUNCIONALIDADES USUARIOS
-  constructor(private userUseCase: EmpleadoUseCase) {}
+  constructor(private readonly userUseCase: EmpleadoUseCase,
+              private readonly httpsResponse:HttpResponse=new HttpResponse()) {}
   
   //traemos todo
-  public getCrtl=async(req:Request,res:Response):Promise<void>=>{
+  public getCrtl=async(req:Request,res:Response):Promise<any>=>{
     try{
-      const user=await this.userUseCase.getUser()
-      res.status(200).send(user)
+      const data=await this.userUseCase.getUser();
+      if (!data)return this.httpsResponse.Error(res,"No existe el dato!");
+      return this.httpsResponse.Ok(res,data);
     }catch(e){
-    console.log(e)
-    }
-    }  
-  //traemos por grupo
-  public getGroup=async(req:Request,res:Response):Promise<void>=>{
-    try{
-      const data=req.params.name;
-      const user=await this.userUseCase.listByGroup(data)
-      res.status(200).send({data:user,msg:"Empleado listado con exito"});
-      
-    }catch(e){
-      res.status(500).send({error:'Internal server error'});
+      return this.httpsResponse.Error(res,"No existe el dato!");
     }};
-  //CONTROLADOR POST (Registrar un Empleado)
-  public insertCtrl= async(req: Request, res: Response):Promise<void>=> {
+
+  //traemos por grupo
+  public getGroup=async(req:Request,res:Response):Promise<any>=>{
     try{
-
-        let data=req.body;
-        const imagePath=req.file?.path||"";
-        const user=await this.userUseCase.registerUser(imagePath,data)
-        res.send({user})
+      const name=req.params.name;
+      const data=await this.userUseCase.listByGroup(name);
+      if (!data)return this.httpsResponse.Error(res,"No existe el dato!");
+      return this.httpsResponse.Ok(res,data);
     }catch(e){
+      return this.httpsResponse.Error(res,"No existe el dato!");
+    }};
 
-        res.status(500).json({ error: 'Internal server error' });
-    }}
+  //CONTROLADOR POST (Registrar un Empleado)
+  public insertCtrl= async(req: Request, res: Response):Promise<any>=> {
+    try{
+      let body=req.body;
+      const imagePath=req.file?.path||"";
+      const data=await this.userUseCase.registerUser(imagePath,body);
+      if (!data)return this.httpsResponse.Error(res,"No existe el dato!");
+      return this.httpsResponse.Ok(res,data);
+    }catch(e){
+      return this.httpsResponse.Error(res,"No existe el dato!");
+    }};
+
   //cargar un ingreso o egreso
-  public uploadHoursCtrl=async(req:Request,res:Response):Promise<void>=>{
+  public uploadHoursCtrl=async(req:Request,res:Response):Promise<any>=>{
   try{
-    const id=req.params.name;
-    const data=req.body;
-    const user=await this.userUseCase.uploadExtraHours(id,data)
-    res.status(200).send({data:user,msg:"Horas adicionales cargadas con exito!"});
+    const name=req.params.name;
+    const body=req.body;
+    const data=await this.userUseCase.uploadExtraHours(name,body)
+    if (!data)return this.httpsResponse.Error(res,"No existe el dato!");
+    return this.httpsResponse.Ok(res,data);
   }catch(e){
-    res.status(500).json({ error: 'Internal server error' });
-  }
-  }
+    return this.httpsResponse.Error(res,"No existe el dato!");
+  }};
+
   //fichada
-  public clockingCtrl=async(req:Request,res:Response):Promise<void>=>{
+  public clockingCtrl=async(req:Request,res:Response):Promise<any>=>{
     try {
         const name = req.params.name;
-        const data=req.body
-        const empleado=await this.userUseCase.clockingUser(name,data)
-        if (!empleado){
-          res.status(500).send("no se pudo realizar la fichada, intente nuevamente o notifique a recursos humanos")
-        }
-        res.send(empleado)
+        const data=await this.userUseCase.clockingUser(name)
+        if (!data)return this.httpsResponse.Error(res,`No se pudo realizar la fichada,\nconsulte con su supervisor o RRHH.`);
+        return this.httpsResponse.Ok(res,data);
       } catch (e) {
-        res.status(500).send({ message: 'Internal server error' });
+        return this.httpsResponse.Error(res,`No se pudo realizar la fichada,\nconsulte con su supervisor o RRHH.`);
       }  
   }
   //busqueda
-  public searchCtrl=async(req:Request,res:Response):Promise<void>=>{
+  public searchCtrl=async(req:Request,res:Response):Promise<any>=>{
     try{
       const match: { [key: string]: RegExp }[] = [];
       const keyword = req.query.keyword?.toString() || '';
       if (keyword) {
-      match.push(
-          { nombre: new RegExp(keyword, 'i')},
-          { apellido:new RegExp(keyword, 'i')},
-          { legajo: new RegExp(keyword.toString(), 'i')},
-          { rotacion: new RegExp(keyword, 'i')},
-          { grupo: new RegExp(keyword, 'i')},
-          { turno: new RegExp(keyword, 'i')},
-          { tipo_liquidacion: new RegExp(keyword, 'i')},
-          { gerencia: new RegExp(keyword, 'i')},
-      );
-      }
-      
-      const query = match.length > 0 ? { $or: match } : {};
-      const form = await this.userUseCase.listBySearch({ $or: match });
-      res.status(200).send({ data: form, msg: 'Búsqueda realizada con éxito!' });
-  } catch (e) {
-      res.status(500).send({ error: 'Internal server error' });
-  }}
+        match.push(
+            { nombre: new RegExp(keyword, 'i')},
+            { apellido:new RegExp(keyword, 'i')},
+            { legajo: new RegExp(keyword.toString(), 'i')},
+            { rotacion: new RegExp(keyword, 'i')},
+            { grupo: new RegExp(keyword, 'i')},
+            { turno: new RegExp(keyword, 'i')},
+            { tipo_liquidacion: new RegExp(keyword, 'i')},
+            { gerencia: new RegExp(keyword, 'i')},
+        );
+      };
+      const data = await this.userUseCase.listBySearch({ $or: match });
+      if (!data)return this.httpsResponse.Error(res,"No existe el dato!");
+      return this.httpsResponse.Ok(res,data);
+   }catch (e) {
+      return this.httpsResponse.Error(res,"No existe el dato!");
+  }};
 
-  //traemos desde hasta 
-  public dateToDate=async(req:Request, res:Response):Promise<void>=>{
+  //Traemos desde hasta 
+  public dateToDate=async(req:Request, res:Response):Promise<any>=>{
   try{
-    const data=req.body;
+    const body=req.body;
     const legajo=req.params.name;
-    const empleado=await this.userUseCase.dateTodate(data,legajo)
-    if (!empleado){
-      throw new Error("no se pudo filtrar")
-    }else{
-      res.status(200).send({data:empleado,msg:"Fechas filtradas con exito"})
-    }
-    
+    const data=await this.userUseCase.dateTodate(body,legajo)
+    if (!data)return this.httpsResponse.Error(res,"No se pudo encontrar el dato!");
+    return this.httpsResponse.Ok(res,data);
   }catch(e){
-    res.status(500).send({ message: 'Internal server error' });
-  }
-  }
-  //actualizar cualquier dato del empleado
-  public update=async(req:Request,res:Response):Promise<void>=>{
+    return this.httpsResponse.Error(res,"No se pudo encontrar el dato!");
+  }};
+
+  //Actualizar cualquier dato del empleado
+  public update=async(req:Request,res:Response):Promise<any>=>{
     try{
       let imagePath=req.file?.path||"";
       const legajo=req.params.name;
-      const data=req.body;
-      const empleado=await this.userUseCase.updateUser(legajo,imagePath,data);
-      res.status(200).send({data:empleado,msg:"Empleado actualizado con exito"});
+      const body=req.body;
+      const data=await this.userUseCase.updateUser(legajo,imagePath,body);
+      if (!data)return this.httpsResponse.Error(res,"No se pudo actualizar el empleado!");
+      return this.httpsResponse.Ok(res,data);
     }catch(e){
-      res.status(500).send({msg:"Internal server error!"})
-    }
-  }
-  //habilitacion de horas extras
-  public searchDayAndUpdate=async(req:Request,res:Response):Promise<void>=>{
+      return this.httpsResponse.Error(res,"Error interno del servidor!");
+    }};
+
+  //Habilitacion de horas extras
+  public searchDayAndUpdate=async(req:Request,res:Response):Promise<any>=>{
     try{
       const legajo=req.params.name;
       const dia=req.body;
-      const empleado=await this.userUseCase.searchDayAndUpdate(legajo,dia[0])
-      if (empleado){
-        res.status(200).send({data:empleado,msg:"Habilitado!"})
-      }else{
-        res.status(500).send({msg:"Internal server error!"})
-      }
+      const data=await this.userUseCase.searchDayAndUpdate(legajo,dia[0])
+      if (!data)return this.httpsResponse.Error(res,"No se pudo actualizar el empleado!");
+      return this.httpsResponse.Ok(res,data);
     }catch(e){
-      res.status(500).send({msg:"Internal server error!"})
-    }
-  }
+      return this.httpsResponse.Error(res,"Error interno del servidor!");
+    }};
+
   //Habilitar o deshabilitar a un empleado
-  public activeCtrl=async(req:Request,res:Response):Promise<void>=>{
+  public activeCtrl=async(req:Request,res:Response):Promise<any>=>{
     try{
-      const data=req.body;
+      const body=req.body;
       const legajo=req.params.name;
-      const empleado=await this.userUseCase.activeUser(legajo,data[0]);
-      if (empleado)res.status(200).send({data:empleado,msg:"Operacion realizada con exito"});
-      else res.status(500).send({msg:"Internal server error!"})
+      const data=await this.userUseCase.activeUser(legajo,body[0]);
+      if (!data)return this.httpsResponse.Error(res,"No se pudo actualizar el empleado!");
+      return this.httpsResponse.Ok(res,data);
     }catch(e){
-      res.status(500).send({msg:"Internal server error!"})
-    }
-  }
+      return this.httpsResponse.Error(res,"Error interno del servidor!");
+    }};
+  
   public legajoCtrl=async(req:Request,res:Response):Promise<void>=>{
     try{
       const legajo=req.params.name;
       const empleado=await this.userUseCase.getByLegajo(legajo);
       if (empleado)res.status(200).send({data:empleado,msg:"ok!"});
-      else res.status(500).send({msg:"Internal server error!"})
+      else res.status(500).send({msg:"Internal server error!"});
     }catch(e){
        res.status(500).send({msg:"Internal server error!"})
-    }
-  }
-  public EliminarCtrl=async(req:Request,res:Response):Promise<void>=>{
+    }};
+  
+  //Eliminar un usuario  
+  public EliminarCtrl=async(req:Request,res:Response):Promise<any>=>{
     try{
       const id=req.params.id;
-      const empleado=await this.userUseCase.deleteUser(id);
-      if (empleado)res.status(200).send({data:empleado,msg:"ok!"});
-      else res.status(500).send({msg:"Internal server error!"})
+      const data=await this.userUseCase.deleteUser(id);
+      if (!data)return this.httpsResponse.Error(res,"No se pudo actualizar el empleado!");
+      return this.httpsResponse.Ok(res,data);
     }catch(e){
-      res.status(500).send({msg:"Internal server error!"})
-    }
-  }
+      return this.httpsResponse.Error(res,"Error interno del servidor!");
+    }};
 }

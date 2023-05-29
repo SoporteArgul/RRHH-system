@@ -125,12 +125,6 @@ export default async()=>{
       let licencia=0;
       if (emp.entrada!=null)entrada = new Date(emp.entrada.getTime() - (3 * 60 * 60 * 1000)); // Resta 3 horas
       if(emp.salida!=null)salida = new Date(emp.salida.getTime() - (3 * 60 * 60 * 1000));
-        
-      
-
-      // for(let i of motivos){
-      //   if(emp.licencia==i)licencia+=8;
-      // }
       let DATA_ROW=[{type:String,value:empleado.legajo, alignVertical:"center"},
                     {type:String,value:empleado.nombre.concat(empleado.apellido)},
                     {type:Date,value:emp.fecha,format: 'yyyy-mm-dd'},

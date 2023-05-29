@@ -5,6 +5,7 @@ import calculo_mensual from "./utils/calculo.mensual.script"
 import cambio_turno from "./utils/actualizar.turno"
 import prueba from "./utils/prueba";
 import generacion_liquidacion from "./utils/generacion.liquidacion";
+import generacionLiquidacion from "./utils/generacion.liquidacion";
 
 
 const tareas=async()=>{
@@ -31,7 +32,7 @@ cron.schedule("0 0 1 12 *", tareaGeneracionCalendario);
 cron.schedule("0 7 1 * *",calculoMensual);
 cron.schedule("0 7 16 * *",calculoMensual);
 cron.schedule("0 0 * * 6",cambioTurno);
-// prueba()
+
 
 }
 
