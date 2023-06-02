@@ -13,51 +13,13 @@ export class EmpleadoUseCase{
     constructor(private readonly empleadoRepository:EmpleadoRepository){}
     
     //REGISTRAR USUARIO 
-    public registerUser=async(imagePath:string,{ legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencia, pais, provincia, ciudad, calle, numero, departamento, piso, codigo_postal, nivel_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto}:{    legajo: string;
-        apellido: string;
-        nombre: string;
-        cuil: string;
-        contratacion: string;
-        fecha_ingreso:Date
-        gerencia: string;
-        area: string;
-        sector: string;
-        centro_de_costo:string;
-        convenio: string;
-        categoria: string;
-        dni: string;
-        fecha_nacimiento:string;
-        sexo: string;
-        email: string;
-        telefono: string;
-        telefono_urgencia:string;
-        pais:string;
-        provincia:string;
-        ciudad:string;
-        calle:string;
-        numero:string;
-        departamento:string;
-        piso:string;
-        codigo_postal:string;
-        nivel_educacion:string;
-        activo: boolean;
-        fecha_egreso:Date;
-        estado_ambiental:string;
-        examen_preocupacional:string;
-        tipo_liquidacion:string;
-        rotacion:string;
-        turno:string;
-        grupo:string;
-        jornada: Jornadas[];
-        liquidacion: Liquidacion[];
-        observaciones: string;
-        foto: string;})=>{
+    public registerUser=async(imagePath:string,{ legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencias, pais, provincia, localidad, calle, numero, dpto, piso, codigo_postal, nivel_de_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto}:{legajo: string;apellido: string;nombre: string;cuil: string;contratacion: string;fecha_ingreso:Date;gerencia: string;area: string;sector: string;centro_de_costo:string;convenio: string;categoria: string;dni: string;fecha_nacimiento:string;sexo: string;email: string;telefono: string;telefono_urgencias:string;pais:string;provincia:string;localidad:string;calle:string;numero:string;dpto:string;piso:string;        codigo_postal:string;nivel_de_educacion:string;activo: boolean;fecha_egreso:Date;estado_ambiental:string;examen_preocupacional:string;tipo_liquidacion:string;rotacion:string;turno:string;grupo:string;jornada: Jornadas[];liquidacion: Liquidacion[];observaciones: string;foto: string;})=>{
         try{
             resizeImage(imagePath)
             const host=process.env.APP_HOST;
             const port=process.env.PORT;
             imagePath=`${host}${port}/${imagePath}`;
-            const userValue=new EmpleadoValue({ legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencia, pais, provincia, ciudad, calle, numero, departamento, piso, codigo_postal, nivel_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto:imagePath})
+            const userValue=new EmpleadoValue({ legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencias, pais, provincia, localidad, calle, numero, dpto, piso, codigo_postal, nivel_de_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto:imagePath})
             const userCreated=await this.empleadoRepository.registerUser(imagePath,userValue)
             return userCreated 
         }catch(e){
@@ -74,6 +36,7 @@ export class EmpleadoUseCase{
             return ERROR
         }};
     
+    //LISTAR POR EL GRUPO
     public listByGroup=async(group:string)=>{
         try{
             const user=await this.empleadoRepository.listByGroup(group)
@@ -84,56 +47,18 @@ export class EmpleadoUseCase{
     }
     
     //MODIFICAR USUARIO
-    public updateUser=async(id:string,imagePath:string,{ legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencia, pais, provincia, ciudad, calle, numero, departamento, piso, codigo_postal, nivel_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto}:{    legajo: string;
-        apellido: string;
-        nombre: string;
-        cuil: string;
-        contratacion: string;
-        fecha_ingreso:Date
-        gerencia: string;
-        area: string;
-        sector: string;
-        centro_de_costo:string;
-        convenio: string;
-        categoria: string;
-        dni: string;
-        fecha_nacimiento:string;
-        sexo: string;
-        email: string;
-        telefono: string;
-        telefono_urgencia:string;
-        pais:string;
-        provincia:string;
-        ciudad:string;
-        calle:string;
-        numero:string;
-        departamento:string;
-        piso:string;
-        codigo_postal:string;
-        nivel_educacion:string;
-        activo: boolean;
-        fecha_egreso:Date;
-        estado_ambiental:string;
-        examen_preocupacional:string;
-        tipo_liquidacion:string;
-        rotacion:string;
-        turno:string;
-        grupo:string;
-        jornada: Jornadas[];
-        liquidacion: Liquidacion[];
-        observaciones: string;
-        foto: string;})=>{
+    public updateUser=async(id:string,imagePath:string,{ legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencias, pais, provincia, localidad, calle, numero, dpto, piso, codigo_postal, nivel_de_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto}:{legajo: string;apellido: string;nombre: string;cuil: string;contratacion: string;fecha_ingreso:Date;gerencia: string;area: string;sector: string;centro_de_costo:string;convenio: string;categoria: string;dni: string;fecha_nacimiento:string;sexo: string;email: string;telefono: string;telefono_urgencias:string;pais:string;provincia:string;localidad:string;calle:string;numero:string;dpto:string;piso:string;        codigo_postal:string;nivel_de_educacion:string;activo: boolean;fecha_egreso:Date;estado_ambiental:string;examen_preocupacional:string;tipo_liquidacion:string;rotacion:string;turno:string;grupo:string;jornada: Jornadas[];liquidacion: Liquidacion[];observaciones: string;foto: string;})=>{
         try{
             if (imagePath!=""){
                 resizeImage(imagePath)
                 const host=process.env.APP_HOST;
                 const port=process.env.PORT;
                 imagePath=`${host}${port}/${imagePath}`;
-                const userValue=new EmpleadoValue({ legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencia, pais, provincia, ciudad, calle, numero, departamento, piso, codigo_postal, nivel_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto:imagePath})
+                const userValue=new EmpleadoValue({ legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencias, pais, provincia, localidad, calle, numero, dpto, piso, codigo_postal, nivel_de_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto:imagePath})
                 const user=await this.empleadoRepository.updateUser(id,userValue)
                 return user
             }else{
-                const userValue=new EmpleadoValue({ legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencia, pais, provincia, ciudad, calle, numero, departamento, piso, codigo_postal, nivel_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto})
+                const userValue=new EmpleadoValue({ legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencias, pais, provincia, localidad, calle, numero,dpto, piso, codigo_postal, nivel_de_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto})
                 const user=await this.empleadoRepository.updateUser(id,userValue)
                 return user
             }
@@ -156,7 +81,8 @@ export class EmpleadoUseCase{
         try{
             const MOMENTO=["Mañana","Tarde","Noche"];
             const fechaActual=moment().format("YYYY-MM-DD").toString();
-            const horaActual = new Date().toLocaleTimeString('es-AR', { hour12: false });
+            // const horaActual = new Date().toLocaleTimeString('es-AR', { hour12: false });
+            const horaActual="16:01:00"
             const horaActualDate = moment(horaActual, 'LTS').toDate();
             let jornadas=null
             const empleado=await this.empleadoRepository.findByLegajo(empleadoId) //buscamos el empleado que queremos modificar
@@ -322,6 +248,7 @@ export class EmpleadoUseCase{
         }catch(e){
             return ERROR
         }}
+
     //CARGAR FICHADA MANUAL
     public uploadExtraHours=async(id:string,data:Array<Date|string>)=>{
         try{
@@ -370,7 +297,6 @@ export class EmpleadoUseCase{
             return ERROR
         }
     }
-
     //BUSQUEDA
     public listBySearch=async(match:any)=>{
        try{
@@ -409,7 +335,7 @@ export class EmpleadoUseCase{
             return ERROR
         }
     }
-
+    //Traer por legajo pero en info reducida
     public getByLegajo=async(legajo:string)=>{
         try{
             const empleado=await this.empleadoRepository.findByLegajo(legajo);
@@ -418,6 +344,7 @@ export class EmpleadoUseCase{
             return ERROR;
         }
     }
+    //Reporte quincenal
     public report=async()=>{
         try{
             const empleados=await this.empleadoRepository.report()
@@ -525,6 +452,36 @@ export class EmpleadoUseCase{
             return ERROR
         }
     }
-
+    //Fichadas que se van generando en vivo
+    public lastClock= async()=>{
+        try{
+            const ayer=moment().subtract(1, 'day').toDate();
+            const hoy=moment().toDate();
+            const data=await this.empleadoRepository.lastClock(ayer,hoy);
+            return data
+        }catch(e){
+            return ERROR
+        }
+    }
+    //Buscar por turno
+    public rotation=async(turno:string)=>{
+        try{
+            const data=await this.empleadoRepository.listByRotation(turno);
+            return data;
+        }catch(e){
+            return ERROR;
+        }
+    }
+    //Buscar por sector
+    public area=async(area:string)=>{
+        try{
+            const ayer=moment().subtract(1, 'day').toDate();
+            const hoy=moment().toDate();
+            const data=await this.empleadoRepository.listByArea(area,ayer,hoy);
+            return data;
+        }catch(e){
+            return ERROR;
+        }
+    }
     
 }

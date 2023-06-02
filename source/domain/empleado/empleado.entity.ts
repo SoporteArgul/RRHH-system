@@ -18,16 +18,16 @@ export interface EmpleadoEntity{
     sexo: string,
     email: string,
     telefono: string,
-    telefono_urgencia:string,
+    telefono_urgencias:string,
     pais:string,
     provincia:string,
-    ciudad:string,
+    localidad:string,
     calle:string,
     numero:string
-    departamento:string,
+    dpto:string,
     piso:string;
     codigo_postal:string,
-    nivel_educacion:string,
+    nivel_de_educacion:string,
     activo: boolean,
     fecha_egreso:Date;
     estado_ambiental:string;

@@ -4,7 +4,6 @@ import { EmpleadoUseCase } from "../../aplication/empleadoUseCase";
 import { MongoRepository } from "../repository/empleado.repository.mongo";
 import upload from "../storage/multer"
 import checkAuth from '../middlewares/verify.token';
-import multer from 'multer';
 
 
 
@@ -13,8 +12,6 @@ const userRepo= new MongoRepository()
 const empleadoUseCase=new EmpleadoUseCase(userRepo)
 const empleadoCtrl=new EmpleadoController(empleadoUseCase)
 const api=`/api/v1/rrhh/empleados`
-
-
 
 
 //POST
@@ -26,6 +23,9 @@ route.get(`${api}/grupo/:name`,checkAuth,empleadoCtrl.getGroup);
 route.get(`${api}/buscar`,checkAuth,empleadoCtrl.searchCtrl)
 route.get(`${api}/activar/:name`,checkAuth,empleadoCtrl.activeCtrl);
 route.get(`${api}/listar/legajo/:name`,checkAuth,empleadoCtrl.legajoCtrl);
+route.get(`${api}/vivo`,checkAuth,empleadoCtrl.FichadasEnVivoCtrl);
+route.get(`${api}/turno/:turno`,checkAuth,empleadoCtrl.ListarTurnoCtrl)
+route.get(`${api}/area/:area`,checkAuth,empleadoCtrl.ListarPorAreaCrtl)
 //PUT
 route.put(`${api}/fichar/:name`,empleadoCtrl.clockingCtrl);
 route.put(`${api}/cargar/:name`,checkAuth,empleadoCtrl.uploadHoursCtrl);

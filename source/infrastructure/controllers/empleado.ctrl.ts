@@ -139,6 +139,7 @@ export class EmpleadoController {
       return this.httpsResponse.Error(res,"Error interno del servidor!");
     }};
   
+  //Ver legajo
   public legajoCtrl=async(req:Request,res:Response):Promise<void>=>{
     try{
       const legajo=req.params.name;
@@ -154,9 +155,37 @@ export class EmpleadoController {
     try{
       const id=req.params.id;
       const data=await this.userUseCase.deleteUser(id);
-      if (!data)return this.httpsResponse.Error(res,"No se pudo actualizar el empleado!");
-      return this.httpsResponse.Ok(res,data);
+      if (!data)return await this.httpsResponse.Error(res,"No se pudo actualizar el empleado!");
+      return await this.httpsResponse.Ok(res,data);
     }catch(e){
       return this.httpsResponse.Error(res,"Error interno del servidor!");
     }};
+  //Fichadas en vivo
+  public FichadasEnVivoCtrl=async(req:Request,res:Response):Promise<any>=>{
+    try{
+      const data=await this.userUseCase.lastClock();
+      if(!data)return this.httpsResponse.Error(res,"No se pueden obtener las fichadas!");
+      return this.httpsResponse.Ok(res,data);
+    }catch(e){
+      return this.httpsResponse.Error(res,"Error interno del servidor!");
+    }}
+  public ListarTurnoCtrl=async(req:Request,res:Response):Promise<any>=>{
+    try{
+      const turno=req.params.turno;
+      const data=await this.userUseCase.rotation(turno);
+      if (!data)return this.httpsResponse.Error(res,"No se puede listar por turno");
+      return this.httpsResponse.Ok(res,data);
+    }catch(e){
+      return this.httpsResponse.Error(res,"Error interno del servidor!");
+    }}
+  public ListarPorAreaCrtl=async(req:Request,res:Response)=>{
+    try{
+      const area=req.params.area;
+      const data=await this.userUseCase.area(area);
+      if(!data)return this.httpsResponse.Error(res,"No se pudo listar por area");
+      return this.httpsResponse.Ok(res,data);
+    }catch(e){
+      return this.httpsResponse.Error(res,"Error interno del servidor!");
+    }
+  }
 }

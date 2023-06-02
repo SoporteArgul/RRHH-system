@@ -19,16 +19,16 @@ export class EmpleadoValue implements EmpleadoEntity{
     sexo: string
     email: string
     telefono: string
-    telefono_urgencia:string
+    telefono_urgencias:string
     pais:string
     provincia:string
-    ciudad:string
+    localidad:string
     calle:string
     numero:string
-    departamento:string
+    dpto:string
     piso:string
     codigo_postal:string
-    nivel_educacion:string
+    nivel_de_educacion:string
     activo: boolean
     fecha_egreso:Date;
     estado_ambiental:string;
@@ -43,7 +43,7 @@ export class EmpleadoValue implements EmpleadoEntity{
     foto: string
 
     constructor({    
-        legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencia, pais, provincia, ciudad, calle, numero, departamento, piso, codigo_postal, nivel_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto
+        legajo, apellido, nombre, cuil, contratacion, fecha_ingreso, gerencia, area, sector, centro_de_costo, convenio, categoria, dni, fecha_nacimiento, sexo, email, telefono, telefono_urgencias, pais, provincia, localidad, calle, numero, dpto, piso, codigo_postal, nivel_de_educacion, activo, fecha_egreso, estado_ambiental, examen_preocupacional, tipo_liquidacion, rotacion, turno, grupo, jornada, liquidacion, observaciones, foto
         }:{    
     legajo: string;
     apellido: string;
@@ -62,16 +62,16 @@ export class EmpleadoValue implements EmpleadoEntity{
     sexo: string;
     email: string;
     telefono: string;
-    telefono_urgencia:string;
+    telefono_urgencias:string;
     pais:string;
     provincia:string;
-    ciudad:string;
+    localidad:string;
     calle:string;
     numero:string;
-    departamento:string;
+    dpto:string;
     piso:string;
     codigo_postal:string;
-    nivel_educacion:string;
+    nivel_de_educacion:string;
     activo: boolean;
     fecha_egreso:Date;
     estado_ambiental:string;
@@ -102,16 +102,16 @@ export class EmpleadoValue implements EmpleadoEntity{
             this.sexo=sexo
             this.email=email
             this.telefono=telefono
-            this.telefono_urgencia=telefono_urgencia
+            this.telefono_urgencias=telefono_urgencias
             this.pais=pais
             this.provincia=provincia
-            this.ciudad=ciudad
+            this.localidad=localidad
             this.calle=calle
             this.numero=numero
-            this.departamento=departamento
+            this.dpto=dpto
             this.piso=piso
             this.codigo_postal=codigo_postal
-            this.nivel_educacion=nivel_educacion
+            this.nivel_de_educacion=nivel_de_educacion
             this.activo=activo
             this.fecha_egreso=fecha_egreso
             this.estado_ambiental=estado_ambiental

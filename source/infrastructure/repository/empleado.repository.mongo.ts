@@ -1,3 +1,4 @@
+import { User } from './../../domain/usuario/usuario.entity';
 import { EmpleadoEntity } from "../../domain/empleado/empleado.entity";
 import { EmpleadoRepository } from "../../domain/empleado/empleado.repository";
 import EmpleadoModel from "../model/empleado.model";
@@ -45,11 +46,52 @@ export class MongoRepository implements EmpleadoRepository{
             throw Error("Error de repositorio")
         }
     }
-    async listByArea(): Promise<any> {
-        
+    async listByArea(area:string,ayer:Date,hoy:Date): Promise<any> {
+        try{
+            const data = await EmpleadoModel.aggregate([
+                { $unwind: "$jornada" },
+                { $unwind: "$jornada" },
+                { $unwind: "$jornada" },
+                { $match: { area:area} },
+                { $match: { "jornada.fecha": { $gte: new Date(ayer), $lte: hoy } } },
+                {
+                    $group: {
+                        _id: "$_id",
+                        nombre: { $first: "$nombre" },
+                        apellido: { $first: "$apellido" },
+                        legajo: { $first: "$legajo" },
+                        jornada: { $push: "$jornada" },
+                        turno:{ $first:"$turno"},
+                        foto:{ $first:"$foto"}
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        nombre: 1,
+                        apellido: 1,
+                        legajo: 1,
+                        jornada: 1,
+                        turno:1,
+                        foto:1
+                    }
+                },
+                { 
+                    $sort: { apellido: 1, turno:1 } 
+                }
+            ]);
+            return data
+        }catch(e){
+            throw Error("Error de repositorio")
+        }
     }
-    async listByRotation(): Promise<any> {
-        
+    async listByRotation(turno:string): Promise<any> {
+        try{
+            const data=await EmpleadoModel.find({turno:turno})
+            return data
+        }catch(e){
+            throw Error("Error de repositorio")
+        }
     }
     async listBySearch(query:any): Promise<any> {
         try{
@@ -193,9 +235,43 @@ export class MongoRepository implements EmpleadoRepository{
                 return empleados
         }catch(e){
             return new Error("Error de repositorio")
+        } 
+    }
+    async lastClock(ayer:Date,hoy:Date): Promise<any> {
+        try{
+            const data = await EmpleadoModel.aggregate([
+                { $unwind: "$jornada" },
+                { $unwind: "$jornada" },
+                { $unwind: "$jornada" },
+                { $match: { "jornada.fecha": { $gte: new Date(ayer), $lte: hoy } } },
+                {
+                    $group: {
+                        _id: "$_id",
+                        nombre: { $first: "$nombre" },
+                        apellido: { $first: "$apellido" },
+                        legajo: { $first: "$legajo" },
+                        jornada: { $push: "$jornada" },
+                        foto:{ $first:"$foto"}
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        nombre: 1,
+                        apellido: 1,
+                        legajo: 1,
+                        jornada: 1,
+                        foto:1
+                    }
+                },
+                { 
+                    $sort: { apellido: 1 } 
+                }
+            ]);
+            return data;
+        }catch(e){
+            return new Error("Error de repositorio");
         }
-        
-        
     }
 
 }

@@ -8,13 +8,14 @@ export interface EmpleadoRepository{
     //GET
     listUser():Promise<any>;
     listByGroup(group:string):Promise<any>;
-    listByRotation():Promise<any>;
-    listByArea():Promise<any>;
+    listByRotation(turno:string):Promise<any>;
+    listByArea(area:string,ayer:Date,hoy:Date):Promise<any>;
     listBySearch(query:Array<JSON>):Promise<any>;
     dateToDate(data:Array<Date>,legajo:string):Promise<any>;
     report():Promise<any>;
     findByLegajo(legajo:string):Promise<any>;
     findByLegajo2(legajo:string):Promise<any>;
+    lastClock(ayer:Date,hoy:Date):Promise<any>;
     //DELETE
     deleteUser(id:string):Promise<any>;
     //PUT

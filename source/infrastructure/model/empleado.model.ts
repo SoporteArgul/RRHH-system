@@ -23,10 +23,10 @@ interface IEmpleado extends Document {
     sexo: string,
     email: string,
     telefono: string,
-    telefono_urgencia: string,
+    telefono_urgencias: string,
     pais: string,
     provincia: string,
-    ciudad: string,
+    localidad: string,
     calle: string,
     numero: string
     departamento: string,
@@ -117,14 +117,14 @@ const EmpleadoSchema = new Schema({
         //     message: MENSAJE
         // }
     },
-    mail: {
+    email: {
         type: String || null,
 
     },
     telefono: {
         type: String
     },
-    telefono_urgencia: {
+    telefono_urgencias: {
         type: String
     },
     pais: {
@@ -153,7 +153,7 @@ const EmpleadoSchema = new Schema({
         type: String
     },
 
-    nivel_educacion: {
+    nivel_de_educacion: {
         type: String
     },
     activo: {

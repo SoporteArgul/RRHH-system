@@ -5,8 +5,7 @@ import calculo_mensual from "./utils/calculo.mensual.script"
 import cambio_turno from "./utils/actualizar.turno"
 import prueba from "./utils/prueba";
 import generacion_liquidacion from "./utils/generacion.liquidacion";
-import generacionLiquidacion from "./utils/generacion.liquidacion";
-
+import prueba2 from "./utils/prueba2"
 
 const tareas=async()=>{
 
