@@ -192,7 +192,40 @@ export class MongoRepository implements EmpleadoRepository{
             console.log("error de repositorio")
         }
     }
- 
+    async dateToDateGeneral(area:string,desde:Date,hasta:Date): Promise<any> {
+        try{
+            const resultado=await EmpleadoModel.aggregate([
+                { $match: { "area": area } },
+                { $unwind: "$jornada" },
+                { $unwind: "$jornada" },
+                { $unwind: "$jornada" },
+                { $match: { "jornada.fecha": { $gte: desde, $lte: hasta } } },
+                {
+                  $group: {
+                    _id: "$_id",
+                    nombre: { $first: "$nombre" },
+                    apellido: { $first: "$apellido" },
+                    legajo: { $first: "$legajo" },
+                    jornada: { $push: "$jornada" }
+                  }
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    nombre: 1,
+                    apellido: 1,
+                    legajo: 1,
+                    jornada:1,
+        
+
+                  }
+                }
+              ]);
+              return resultado
+        }catch(e){
+            return new Error("no se pudo encontrar las fechas")
+        }
+    }
     async report(): Promise<any> {
         try{
             const hoy = moment().date(15);

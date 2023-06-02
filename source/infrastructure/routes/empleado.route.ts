@@ -26,6 +26,7 @@ route.get(`${api}/listar/legajo/:name`,checkAuth,empleadoCtrl.legajoCtrl);
 route.get(`${api}/vivo`,checkAuth,empleadoCtrl.FichadasEnVivoCtrl);
 route.get(`${api}/turno/:turno`,checkAuth,empleadoCtrl.ListarTurnoCtrl)
 route.get(`${api}/area/:area`,checkAuth,empleadoCtrl.ListarPorAreaCrtl)
+route.get(`${api}/dias-area/:area`,empleadoCtrl.ListarDesdeHastaCtrl)
 //PUT
 route.put(`${api}/fichar/:name`,empleadoCtrl.clockingCtrl);
 route.put(`${api}/cargar/:name`,checkAuth,empleadoCtrl.uploadHoursCtrl);

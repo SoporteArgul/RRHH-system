@@ -483,5 +483,15 @@ export class EmpleadoUseCase{
             return ERROR;
         }
     }
+    public desdeHasta=async(area:string)=>{
+        try{
+            const desde=moment().subtract(27, 'days').toDate();
+            const hasta=moment().toDate();
+            const data=await this.empleadoRepository.dateToDateGeneral(area,desde,hasta)
+            return data
+        }catch(e){
+            return ERROR
+        }
+    }
     
 }
