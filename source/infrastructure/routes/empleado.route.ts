@@ -16,6 +16,7 @@ const api=`/api/v1/rrhh/empleados`
 
 //POST
 route.post(`${api}/registrar`,upload.single("image"),checkAuth,empleadoCtrl.insertCtrl);
+route.post(`${api}/dias-area/:area`,empleadoCtrl.ListarDesdeHastaCtrl);
 //GET
 route.get(`${api}/listar`,checkAuth,empleadoCtrl.getCrtl);
 route.get(`${api}/dias/:name`,checkAuth,empleadoCtrl.dateToDate);
@@ -24,9 +25,9 @@ route.get(`${api}/buscar`,checkAuth,empleadoCtrl.searchCtrl)
 route.get(`${api}/activar/:name`,checkAuth,empleadoCtrl.activeCtrl);
 route.get(`${api}/listar/legajo/:name`,checkAuth,empleadoCtrl.legajoCtrl);
 route.get(`${api}/vivo`,checkAuth,empleadoCtrl.FichadasEnVivoCtrl);
-route.get(`${api}/turno/:turno`,checkAuth,empleadoCtrl.ListarTurnoCtrl)
-route.get(`${api}/area/:area`,checkAuth,empleadoCtrl.ListarPorAreaCrtl)
-route.get(`${api}/dias-area/:area`,empleadoCtrl.ListarDesdeHastaCtrl)
+route.get(`${api}/turno/:turno`,checkAuth,empleadoCtrl.ListarTurnoCtrl);
+route.get(`${api}/area/:area`,checkAuth,empleadoCtrl.ListarPorAreaCrtl);
+
 //PUT
 route.put(`${api}/fichar/:name`,empleadoCtrl.clockingCtrl);
 route.put(`${api}/cargar/:name`,checkAuth,empleadoCtrl.uploadHoursCtrl);
