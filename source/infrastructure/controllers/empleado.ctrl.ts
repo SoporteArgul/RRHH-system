@@ -190,7 +190,8 @@ export class EmpleadoController {
   public ListarDesdeHastaCtrl=async(req:Request,res:Response)=>{
     try{
       const area=req.params.area;
-      const data=await this.userUseCase.desdeHasta(area);
+      const body=req.body;
+      const data=await this.userUseCase.desdeHasta(area,body);
       if(!data)return this.httpsResponse.Error(res,"No se pudo listar por area");
       return this.httpsResponse.Ok(res,data);
     }catch(e){

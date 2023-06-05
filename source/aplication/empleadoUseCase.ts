@@ -82,7 +82,7 @@ export class EmpleadoUseCase{
             const MOMENTO=["Mañana","Tarde","Noche"];
             const fechaActual=moment().format("YYYY-MM-DD").toString();
             // const horaActual = new Date().toLocaleTimeString('es-AR', { hour12: false });
-            const horaActual="16:01:00"
+            const horaActual="14:01:00"
             const horaActualDate = moment(horaActual, 'LTS').toDate();
             let jornadas=null
             const empleado=await this.empleadoRepository.findByLegajo(empleadoId) //buscamos el empleado que queremos modificar
@@ -483,12 +483,14 @@ export class EmpleadoUseCase{
             return ERROR;
         }
     }
-    public desdeHasta=async(area:string)=>{
+    public desdeHasta=async(area:string,body:Array<Date>)=>{
         try{
-            const desde=moment().subtract(27, 'days').toDate();
-            const hasta=moment().toDate();
-            const data=await this.empleadoRepository.dateToDateGeneral(area,desde,hasta)
-            return data
+            if(body[0]&&body[1]){
+                const desde=new Date(body[0])
+                const hasta=new Date(body[1])
+                const data=await this.empleadoRepository.dateToDateGeneral(area,desde,hasta)
+                return data
+            }else return ERROR
         }catch(e){
             return ERROR
         }
