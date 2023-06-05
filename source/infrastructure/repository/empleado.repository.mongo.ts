@@ -219,7 +219,8 @@ export class MongoRepository implements EmpleadoRepository{
         
 
                   }
-                }
+                },
+                { $sort: { apellido: 1 } }
               ]);
               return resultado
         }catch(e){
