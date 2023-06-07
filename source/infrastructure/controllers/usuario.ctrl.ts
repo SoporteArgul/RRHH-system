@@ -25,6 +25,7 @@ export class usuarioController{
                 res.status(409).send({msg:"Usuario o contraseña incorrecta!"});
             };
         }catch(e){
+            console.log(e)
             res.status(404).send({error:ERROR})
         }};
     

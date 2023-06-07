@@ -20,8 +20,9 @@ export interface EmpleadoRepository{
     //DELETE
     deleteUser(id:string):Promise<any>;
     //PUT
-    saveChangesJornada(jornadas:any):Promise<any>;
+    saveChangesJornada(empleado:any,jornada:any,mag:string):Promise<any>;
     updateUser(id:string,data:EmpleadoEntity):Promise<any>;
+    updateJornada(legajo:string,jornada:any,fecha:Date,valor:string):Promise<any>;
     
     
 }

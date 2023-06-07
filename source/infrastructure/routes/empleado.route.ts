@@ -4,12 +4,14 @@ import { EmpleadoUseCase } from "../../aplication/empleadoUseCase";
 import { MongoRepository } from "../repository/empleado.repository.mongo";
 import upload from "../storage/multer"
 import checkAuth from '../middlewares/verify.token';
+import { Clock } from '../helpers/clocking';
 
 
 
 const route=Router()
 const userRepo= new MongoRepository()
-const empleadoUseCase=new EmpleadoUseCase(userRepo)
+const clock=new Clock(userRepo)
+const empleadoUseCase=new EmpleadoUseCase(userRepo,clock)
 const empleadoCtrl=new EmpleadoController(empleadoUseCase)
 const api=`/api/v1/rrhh/empleados`
 

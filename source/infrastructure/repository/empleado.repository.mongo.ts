@@ -136,11 +136,18 @@ export class MongoRepository implements EmpleadoRepository{
         }
         
     }
-    async saveChangesJornada(empleado: any): Promise<any> {
+    async saveChangesJornada(empleado: any,jornada:any,msg:string): Promise<any> {
         try{
             empleado.markModified('jornada')
             const resultado=await empleado.save()
-            return resultado;
+            const data={
+                nombre:empleado.nombre,
+                apellido:empleado.apellido,
+                legajo:empleado.legajo,
+                jornada:jornada,
+                mensaje:msg
+            }
+            return data;
         }catch(e){
             console.log("error de repositorio")
         }
@@ -305,6 +312,23 @@ export class MongoRepository implements EmpleadoRepository{
             return data;
         }catch(e){
             return new Error("Error de repositorio");
+        }
+    }
+    async updateJornada(legajo: string, jornada: any,fecha:Date): Promise<any> {
+        try{
+            const valor="entrada"
+            const data=await EmpleadoModel.aggregate([
+                { $match: {legajo:legajo}},
+                { $unwind: "$jornada" },
+                { $unwind: "$jornada" },
+                { $unwind: "$jornada" },
+                { $match: {"jornada.fecha":fecha}},
+                { $set: {"$jornada.$.entrada":jornada},
+}
+            ])
+            return data
+        }catch(e){
+
         }
     }
 
