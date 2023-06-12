@@ -31,7 +31,7 @@ cron.schedule("0 0 1 12 *", tareaGeneracionCalendario);
 cron.schedule("0 7 1 * *",calculoMensual);
 cron.schedule("0 7 16 * *",calculoMensual);
 cron.schedule("0 0 * * 6",cambioTurno);
-
+calculo_diario()
 
 }
 

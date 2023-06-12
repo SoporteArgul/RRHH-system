@@ -53,6 +53,8 @@ const EmpleadoSchema = new Schema({
     },
     legajo: {
         type: String,
+        minlength:2,
+        maxLengh:10,
         unique: true
     },
     apellido: {
@@ -161,8 +163,8 @@ const EmpleadoSchema = new Schema({
     },
 
     fecha_egreso: {
-        type: Date || null,
-        default: null
+        type: String,
+
     },
     estado_ambiental: {
         type: String
@@ -192,14 +194,6 @@ const EmpleadoSchema = new Schema({
         // },
         default: "A"
     },
-    turno: {
-        type: String,
-        // enum: {
-        //     values: ["Mañana", "Tarde", "Noche"],
-        //     message: MENSAJE
-        // },
-        default: "Mañana"
-    },
     jornada: [[[{
         fecha: {
             type: Date,
@@ -221,6 +215,13 @@ const EmpleadoSchema = new Schema({
             //             "ausente sin aviso","suspension","reserva legal de puesto"],
             //     message:MENSAJE
             // }
+        },
+        turno:{
+            type:String,
+            enum:{
+                values:["mañana","tarde","noche","-",""],
+                message:MENSAJE
+            }
         },
         entrada: {
             type: Date || null,
@@ -283,7 +284,7 @@ const EmpleadoSchema = new Schema({
 
         }
     }]]],
-    liquidacion: [[{
+    liquidacion: [[[{
         fecha_liquidacion_horas: {
             type: Date,
             default: null
@@ -312,11 +313,26 @@ const EmpleadoSchema = new Schema({
             type: Number,
             default: 0
         },
-        total_diurna_enfermedad: { type: Number, default: 0 },
-        total_nocturna_enfermedad: { type: Number, default: 0 },
-        total_licencia_gremial: { type: Number, default: 0 },
-        total_diurna_feriado_ley: { type: Number, default: 0 },
-        total_nocturna_feriado_ley: { type: Number, default: 0 },
+        total_diurna_enfermedad:{ 
+            type: Number, 
+            default: 0 
+        },
+        total_nocturna_enfermedad:{ 
+            type: Number, 
+            default: 0 
+        },
+        total_licencia_gremial: { 
+            type: Number, 
+            default: 0 
+        },
+        total_diurna_feriado_ley: { 
+            type: Number, 
+            default: 0 
+        },
+        total_nocturna_feriado_ley: { 
+            type: Number, 
+            default: 0 
+        },
         total_accidente: { type: Number, default: 0 },
         total_vacaciones: { type: Number, default: 0 },
         total_licencia_maternidad: { type: Number, default: 0 },
@@ -334,7 +350,7 @@ const EmpleadoSchema = new Schema({
         total_nocturna_reserva_legal_puesto: { type: Number, default: 0 },
         total_licencia_aislamiento: { type: Number, default: 0 },
         total_licencia_vacunacion: { type: Number, default: 0 },
-    }]],
+    }]]],
     observaciones: {
         type: String,
         default: "Sin Observaciones"

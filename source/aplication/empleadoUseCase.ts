@@ -95,7 +95,9 @@ export class EmpleadoUseCase{
                const salida=await this.clock.salida(empleado,jornada,horaActual);
                if(salida)return salida;
                const horas_extra=await this.clock.horasExtra(empleado,jornada,horaActual);
-               if(horas_extra)return horas_extra
+               if(horas_extra)return horas_extra;
+               const error=await this.clock.existe(empleado,jornada,horaActual)
+               if(error)return error
             }
         }catch(e){
             return ERROR
@@ -119,18 +121,18 @@ export class EmpleadoUseCase{
                 if (jornadas && data[0]=="normal"&& (e instanceof Date && s instanceof Date != null) ){
                     jornadas.entrada=e;
                     jornadas.salida=s;
-                    const resultado=await this.empleadoRepository.saveChangesJornada(empleado,jornadas,"")
+                    const resultado=await this.empleadoRepository.saveChangesJornada(empleado,jornadas,"Jornada normal cargada con exito!")
                     return resultado
                 }
                 if (jornadas && data[0]=="extra" && (e instanceof Date && s instanceof Date != null)){
                     jornadas.entrada_horas_extra=e;
                     jornadas.salida_horas_extra=s;
-                    const resultado=await this.empleadoRepository.saveChangesJornada(empleado,jornadas,"")
+                    const resultado=await this.empleadoRepository.saveChangesJornada(empleado,jornadas,"Horas extra cargadas con exito!")
                     return resultado
                 };
                 if(jornadas && data[0]=="licencia"){
                     jornadas.licencia=data[2];
-                    const resultado=await this.empleadoRepository.saveChangesJornada(empleado,jornadas,"")
+                    const resultado=await this.empleadoRepository.saveChangesJornada(empleado,jornadas,`licencia por ${data[2]}, se cargo con exito!`)
                     return resultado
                 }
                 
@@ -163,12 +165,12 @@ export class EmpleadoUseCase{
     //Habilitar al empleado para hacer horas extras
     public searchDayAndUpdate=async(legajo:string,fecha:Date)=>{
         try{
-            let jornada=null;
+
             const empleado=await this.empleadoRepository.findByLegajo(legajo);
-            jornada=buscarFecha(empleado.jornada,fecha);
+            const jornada=buscarFecha(empleado.jornada,fecha);
             if (jornada){
                 jornada.habilitado_horas_extra=true;
-                const guardar=await this.empleadoRepository.saveChangesJornada(empleado,jornada,"");
+                const guardar=await this.empleadoRepository.saveChangesJornada(empleado,jornada,`Se habilitaron horas extra para el ${fecha}`);
                 return guardar;
             }
         }catch(e){
@@ -181,8 +183,7 @@ export class EmpleadoUseCase{
             const empleado=await this.empleadoRepository.findByLegajo2(legajo);
             if (empleado){
                 empleado.activo=opcion;
-                const jornada="";
-                const guardar=await this.empleadoRepository.saveChangesJornada(empleado,jornada,"");
+                const guardar=await this.empleadoRepository.saveChangesJornada(empleado,null,"");
                 return guardar;
             }
         }catch(e){

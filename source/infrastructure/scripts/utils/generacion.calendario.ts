@@ -18,6 +18,7 @@ export default async () => {
           feriado: false,
           suspendido:false,
           licencia:"",
+          turno:"-",
           entrada: null,
           salida: null,
           entrada_descanso:null,

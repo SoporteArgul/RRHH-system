@@ -149,6 +149,7 @@ export class MongoRepository implements EmpleadoRepository{
             }
             return data;
         }catch(e){
+            console.log(e)
             console.log("error de repositorio")
         }
     }
@@ -170,8 +171,7 @@ export class MongoRepository implements EmpleadoRepository{
                     edad: { $first: "$edad" },
                     legajo: { $first: "$legajo" },
                     email: { $first: "$email" },
-                    liquidacion_mensual: { $first: "$liquidacion_mensual" },
-                    liquidacion_jornal: { $first: "$liquidacion_jornal" },
+                    tipo_liquidacion: { $first: "$tipo_liquidacion" },
                     rotacion: { $first: "$rotacion" },
                     grupo: { $first: "$grupo" },
                     jornada: { $push: "$jornada" }
@@ -185,12 +185,10 @@ export class MongoRepository implements EmpleadoRepository{
                     edad: 1,
                     legajo: 1,
                     email: 1,
-                    liquidacion_mensual: 1,
-                    liquidacion_jornal: 1,
+                    tipo_liquidacion:1,
                     jornada:1,
                     rotacion: 1,
                     grupo: 1,
-                    total_horas_trabajadas: 1
                   }
                 }
               ]);

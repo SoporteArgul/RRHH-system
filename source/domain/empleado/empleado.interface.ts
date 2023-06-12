@@ -3,6 +3,7 @@ interface Jornadas{
    suspension:Boolean;
    licencia:string;
    feriado:Boolean;
+   turno:string;
    entrada:Date|null;
    salida:Date|null;
    entrada_descanso:Date|null;

@@ -6,22 +6,18 @@ export class Clock{
     //chequeamos si es una entrada o una salida
     public async entrada(empleado:any,jornada:any,horaActual:Date):Promise<any>{
         try{
-
+            const msg="Entrada registrada con exito!";
             let entrada=jornada.entrada;
             let salida=jornada.salidas;
             const habilitado=jornada.habilitado_horas_extra;
             if (!habilitado){
                 if(entrada==null && salida==null){
-                    console.log("entrada")
-                    jornada.entrada=horaActual;
-                    const msg="Entrada registrada con exito!";
+                    jornada.entrada=horaActual;     
                     const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
                     return resultado;
                     };
             }else if (entrada==null && salida==null){
-                console.log("entrada")
                 jornada.entrada=horaActual;
-                const msg="Entrada registrada con exito!";
                 const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
                 return resultado;
             };
@@ -31,15 +27,15 @@ export class Clock{
     }
     public async salida(empleado:any,jornada:any,horaActual:Date):Promise<any>{
         try{
+            const msg="Salida registrada con exito!";
             let entrada=jornada.entrada;
             let salida=jornada.salida;
             let salida_descanso=jornada.salida_descanso;
-                if(entrada&&salida_descanso&&salida==null){
-                    jornada.salida=horaActual;
-                    const msg="Salida registrada con exito!";
-                    const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
-                    return resultado;
-                }
+            if(entrada&&salida_descanso&&salida==null){
+                jornada.salida=horaActual;
+                const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
+                return resultado;
+            }
         }catch(e){
             return ERROR;
         }
@@ -52,14 +48,12 @@ export class Clock{
             let entrada_descanso=jornada.entrada_descanso;
             let salida_descanso=jornada.salida_descanso;
             if (entrada && salida==null && entrada_descanso==null && salida_descanso==null){
-                console.log("entrada descanso")
                 jornada.entrada_descanso=horaActual;
                 const msg="Entrada al descanso registrado con exito!";
                 const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
                 return resultado;
             }
             if (entrada &&  entrada_descanso && salida==null && salida_descanso==null ){
-                console.log("salida descanso")
                 jornada.salida_descanso=horaActual;
                 const msg="Salida del descanso registrada con exito!";
                 const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
@@ -79,29 +73,27 @@ export class Clock{
             let entrada_horas_extra=jornada.entrada_horas_extra;
             let salida_horas_extra=jornada.salida_horas_extra;
             if (habilitado){
+                //horas extra antes de la jornada
                 if(entrada==null && entrada_horas_extra==null){
-                    console.log("entrada horas extra")
                     jornada.entrada_horas_extra=horaActual;
                     const msg="Entrada horas extra realizada con exito!";
                     const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
                     return resultado;
                 }
                 if(entrada==null && entrada_horas_extra && salida_horas_extra==null){
-                    console.log("salida horas extra")
                     jornada.salida_horas_extra=horaActual;
                     const msg="Salida horas extra realizada con exito!";
                     const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
                     return resultado;
                 }
-                if(entrada && salida&&entrada_horas_extra==null){
-                    console.log("entrada horas extra 2")
+                //horas extra despue de la jornada
+                if(entrada && salida && entrada_horas_extra==null){
                     jornada.entrada_horas_extra=horaActual;
                     const msg="Entrada horas extra realizada con exito!";
                     const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
                     return resultado;
                 }
-                if(entrada && salida && entrada_horas_extra){
-                    console.log("salida horas extra 2")
+                if(entrada && salida && entrada_horas_extra && salida_horas_extra==null  ){
                     jornada.salida_horas_extra=horaActual
                     const msg="Salida horas extra realizada con exito!";
                     const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
@@ -110,6 +102,14 @@ export class Clock{
             }        
         }catch(e){
             return ERROR
+        }
+    }
+    public async existe(empleado:any,jornada:any,fechaActual:Date):Promise<any>{
+        try{
+            if (jornada.entrada&&jornada.entrada_descanso&&jornada.salida_descanso&&jornada.salida)
+            return `Ya se registraron todas sus entradas para el dia de ${fechaActual }`
+        }catch(e){
+
         }
     }
 }
