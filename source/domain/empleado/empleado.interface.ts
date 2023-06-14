@@ -18,6 +18,28 @@ interface Jornadas{
    horas_nocturnas_50:number;
    horas_diurnas_100:number;
    horas_nocturnas_100:number;
+   diurna_enfermedad: number,
+   nocturna_enfermedad: number,
+   licencia_gremial: number,
+   diurna_feriado_ley: number,
+   nocturna_feriado_ley: number,
+   accidente: number,
+   vacaciones: number,
+   licencia_maternidad: number,
+   licencia_mudanza: number,
+   licencia_nacimiento: number,
+   ausente_con_aviso: number,
+   ausente_sin_aviso: number,
+   licencia_examen: number,
+   horas_suspendido: number,
+   licencia_fallecimiento: number,
+   licencia_matrimonio: number,
+   licencia_donacion_sangre: number,
+   ausencia_enfermadad_injustificada: number,
+   diurna_reserva_legal_puesto: number,
+   nocturna_reserva_legal_puesto: number,
+   licencia_aislamiento: number,
+   licencia_vacunacion: number
    observaciones:string;
 }
 

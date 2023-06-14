@@ -2,7 +2,7 @@ import { Schema, model, Document, Model } from "mongoose"
 import mongoose from "mongoose";
 import "dotenv/config"
 import { Jornadas as IJornada, Liquidacion as ICalculoHoras } from "../../domain/empleado/empleado.interface";
-import path from "path";
+
 
 const MENSAJE: string = "Ingrese un valor que este en las opciones!"
 interface IEmpleado extends Document {
@@ -53,8 +53,8 @@ const EmpleadoSchema = new Schema({
     },
     legajo: {
         type: String,
-        minlength:2,
-        maxLengh:10,
+        minlength: 2,
+        maxLengh: 10,
         unique: true
     },
     apellido: {
@@ -202,7 +202,7 @@ const EmpleadoSchema = new Schema({
             type: Boolean,
             default: false
         },
-        suspendido: {
+        suspension: {
             type: Boolean,
             default: false
         },
@@ -216,11 +216,11 @@ const EmpleadoSchema = new Schema({
             //     message:MENSAJE
             // }
         },
-        turno:{
-            type:String,
-            enum:{
-                values:["mañana","tarde","noche","-",""],
-                message:MENSAJE
+        turno: {
+            type: String,
+            enum: {
+                values: ["mañana", "tarde", "noche", "-", ""],
+                message: MENSAJE
             }
         },
         entrada: {
@@ -279,6 +279,94 @@ const EmpleadoSchema = new Schema({
             type: Number,
             default: 0
         },
+        diurna_enfermedad: {
+            type: Number,
+            default: 0
+        },
+        nocturna_enfermedad: {
+            type: Number,
+            default: 0
+        },
+        licencia_gremial: {
+            type: Number,
+            default: 0
+        },
+        diurna_feriado_ley: {
+            type: Number,
+            default: 0
+        },
+        nocturna_feriado_ley: {
+            type: Number,
+            default: 0
+        },
+        accidente: {
+            type: Number,
+            default: 0
+        },
+        vacaciones: {
+            type: Number,
+            default: 0
+        },
+        licencia_maternidad: {
+            type: Number,
+            default: 0
+        },
+        licencia_mudanza: {
+            type: Number,
+            default: 0
+        },
+        licencia_nacimiento: {
+            type: Number,
+            default: 0
+        },
+        ausente_con_aviso: {
+            type: Number,
+            default: 0
+        },
+        ausente_sin_aviso: {
+            type: Number,
+            default: 0
+        },
+        licencia_examen: {
+            type: Number,
+            default: 0
+        },
+        horas_suspension: {
+            type: Number,
+            default: 0
+        },
+        licencia_fallecimiento: {
+            type: Number,
+            default: 0
+        },
+        licencia_matrimonio: {
+            type: Number,
+            default: 0
+        },
+        licencia_donacion_sangre: {
+            type: Number,
+            default: 0
+        },
+        ausencia_enfermadad_injustificada: {
+            type: Number,
+            default: 0
+        },
+        diurna_reserva_legal_puesto: {
+            type: Number,
+            default: 0
+        },
+        nocturna_reserva_legal_puesto: {
+            type: Number,
+            default: 0
+        },
+        licencia_aislamiento: {
+            type: Number,
+            default: 0
+        },
+        licencia_vacunacion: {
+            type: Number,
+            default: 0
+        },
         observaciones: {
             type: String,
 
@@ -313,25 +401,25 @@ const EmpleadoSchema = new Schema({
             type: Number,
             default: 0
         },
-        total_diurna_enfermedad:{ 
-            type: Number, 
-            default: 0 
+        total_diurna_enfermedad: {
+            type: Number,
+            default: 0
         },
-        total_nocturna_enfermedad:{ 
-            type: Number, 
-            default: 0 
+        total_nocturna_enfermedad: {
+            type: Number,
+            default: 0
         },
-        total_licencia_gremial: { 
-            type: Number, 
-            default: 0 
+        total_licencia_gremial: {
+            type: Number,
+            default: 0
         },
-        total_diurna_feriado_ley: { 
-            type: Number, 
-            default: 0 
+        total_diurna_feriado_ley: {
+            type: Number,
+            default: 0
         },
-        total_nocturna_feriado_ley: { 
-            type: Number, 
-            default: 0 
+        total_nocturna_feriado_ley: {
+            type: Number,
+            default: 0
         },
         total_accidente: { type: Number, default: 0 },
         total_vacaciones: { type: Number, default: 0 },

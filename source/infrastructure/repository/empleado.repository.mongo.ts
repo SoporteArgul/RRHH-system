@@ -60,6 +60,7 @@ export class MongoRepository implements EmpleadoRepository{
                         nombre: { $first: "$nombre" },
                         apellido: { $first: "$apellido" },
                         legajo: { $first: "$legajo" },
+                        area:{$first:"$area"},
                         jornada: { $push: "$jornada" },
                         turno:{ $first:"$turno"},
                         foto:{ $first:"$foto"}
@@ -71,6 +72,7 @@ export class MongoRepository implements EmpleadoRepository{
                         nombre: 1,
                         apellido: 1,
                         legajo: 1,
+                        area:1,
                         jornada: 1,
                         turno:1,
                         foto:1
