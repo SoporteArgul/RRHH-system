@@ -1,4 +1,5 @@
 import { EmpleadoRepository } from "../../domain/empleado/empleado.repository";
+import moment from "moment";
 
 const ERROR="Disculpe, no se pudo realizar la fichada, hablar con su supervisor o recursos humanos para una carga manual, muchas gracias!"
 export class Clock{
@@ -31,7 +32,7 @@ export class Clock{
             let entrada=jornada.entrada;
             let salida=jornada.salida;
             let salida_descanso=jornada.salida_descanso;
-            if(entrada&&salida_descanso&&salida==null){
+            if(entrada&&salida_descanso&&salida==null&&(Math.abs(moment(salida_descanso).diff(moment(horaActual),'minutes'))>2)){
                 jornada.salida=horaActual;
                 const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
                 return resultado;
@@ -47,13 +48,15 @@ export class Clock{
             let salida=jornada.salida;
             let entrada_descanso=jornada.entrada_descanso;
             let salida_descanso=jornada.salida_descanso;
-            if (entrada && salida==null && entrada_descanso==null && salida_descanso==null){
+            let diferencia_e=Math.abs(moment(entrada).diff(moment(horaActual),'minutes'))>2
+            if (entrada && salida==null && entrada_descanso==null && salida_descanso==null&&diferencia_e){
                 jornada.entrada_descanso=horaActual;
                 const msg="Entrada al descanso registrado con exito!";
                 const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
                 return resultado;
             }
-            if (entrada &&  entrada_descanso && salida==null && salida_descanso==null ){
+            let diferencia_s=Math.abs(moment(entrada_descanso).diff(moment(horaActual),'minutes'))>2
+            if (entrada &&  entrada_descanso && salida==null && salida_descanso==null&&diferencia_s ){
                 jornada.salida_descanso=horaActual;
                 const msg="Salida del descanso registrada con exito!";
                 const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
@@ -80,7 +83,7 @@ export class Clock{
                     const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
                     return resultado;
                 }
-                if(entrada==null && entrada_horas_extra && salida_horas_extra==null){
+                if(entrada==null && entrada_horas_extra && salida_horas_extra==null&&Math.abs(moment(entrada_horas_extra).diff(moment(horaActual),'minutes'))>2){
                     jornada.salida_horas_extra=horaActual;
                     const msg="Salida horas extra realizada con exito!";
                     const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
@@ -93,7 +96,7 @@ export class Clock{
                     const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
                     return resultado;
                 }
-                if(entrada && salida && entrada_horas_extra && salida_horas_extra==null  ){
+                if(entrada && salida && entrada_horas_extra && salida_horas_extra==null&&Math.abs(moment(entrada_horas_extra).diff(moment(horaActual),'minutes'))>2 ){
                     jornada.salida_horas_extra=horaActual
                     const msg="Salida horas extra realizada con exito!";
                     const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
@@ -109,7 +112,7 @@ export class Clock{
             if (jornada.entrada&&jornada.entrada_descanso&&jornada.salida_descanso&&jornada.salida)
             return `Ya se registraron todas sus entradas para el dia de ${fechaActual }`
         }catch(e){
-
+            return 'error';
         }
     }
 }
