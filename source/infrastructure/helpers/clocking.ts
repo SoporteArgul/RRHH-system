@@ -36,7 +36,12 @@ export class Clock{
                 jornada.salida=horaActual;
                 const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
                 return resultado;
-            }
+            };
+            if(entrada&&salida==null&&(Math.abs(moment(entrada).diff(moment(horaActual),'minutes'))>=8)){
+                jornada.salida=horaActual;
+                const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
+                return resultado;
+            };
         }catch(e){
             return ERROR;
         }
@@ -49,7 +54,7 @@ export class Clock{
             let entrada_descanso=jornada.entrada_descanso;
             let salida_descanso=jornada.salida_descanso;
             let diferencia_e=Math.abs(moment(entrada).diff(moment(horaActual),'minutes'))>2
-            if (entrada && salida==null && entrada_descanso==null && salida_descanso==null&&diferencia_e){
+            if (entrada && salida==null && entrada_descanso==null && salida_descanso==null&&diferencia_e&& !(Math.abs(moment(entrada).diff(moment(horaActual),'minutes'))>=8)){
                 jornada.entrada_descanso=horaActual;
                 const msg="Entrada al descanso registrado con exito!";
                 const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);

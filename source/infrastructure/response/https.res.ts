@@ -17,6 +17,10 @@ export class HttpResponse {
     });
   }
 
+  Download(res: Response, data?: any): any {
+    return res.status(HttpStatus.OK).download("",`informe ${new Date().toLocaleDateString()}`);
+  }
+
   NotFound(res: Response, data?: any): Response {
     return res.status(HttpStatus.NOT_FOUND).json({
       status: HttpStatus.NOT_FOUND,

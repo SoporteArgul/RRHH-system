@@ -197,4 +197,14 @@ export class EmpleadoController {
     }catch(e){
       return this.httpsResponse.Error(res,"Error interno del servidor!");
     }};
+  public reportCtrl=async(req:Request,res:Response)=>{
+    try{
+      const body=req.body;
+      const data=await this.userUseCase.report()
+      if(!data)return this.httpsResponse.Error(res,"No se pudo realizar el reporte");
+      return this.httpsResponse.Ok(res,data);
+    }catch(e){
+      return this.httpsResponse.Error(res,"Error interno del servidor!");
+    }
+  }
 }
