@@ -92,7 +92,7 @@ export class EmpleadoController {
   public searchCtrl=async(req:Request,res:Response):Promise<any>=>{
     try{
       const match: { [key: string]: RegExp }[] = [];
-      const keyword = req.query.keyword?.toString() || '';
+      const keyword = (req.query.keyword|| '').toString() ;
       if (keyword) {
         match.push(
             { nombre: new RegExp(keyword, 'i')},

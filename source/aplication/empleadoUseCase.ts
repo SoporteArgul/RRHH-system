@@ -274,10 +274,12 @@ export class EmpleadoUseCase{
             const data=await this.empleadoRepository.listByGroup(grupo);
             const empleados=data.forEach(async (empleado:any)=>{
                 jornada=buscarFechas(empleado.jornada,new Date(i),new Date(f))
-                jornada?.map((j:any)=>{
+                if(jornada){
+                    jornada.map((j:any)=>{
                   j.turno=turno;
                 })
-                emp.push({nombre:empleado.nombre,apellido:empleado.apellido,legajo:empleado.legajo,jornada:jornada})
+                emp.push({nombre:empleado.nombre,apellido:empleado.apellido,legajo:empleado.legajo,jornada:jornada}) 
+                }
                 await this.empleadoRepository.saveChangesJornada(empleado,jornada,"jornadas modificadas con exito!")
               })
             return emp
