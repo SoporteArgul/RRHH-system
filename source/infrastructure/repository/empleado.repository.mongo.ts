@@ -122,7 +122,7 @@ export class MongoRepository implements EmpleadoRepository{
     } 
     async findByLegajo(legajo:string): Promise<any> {
         try{
-            const empleado=await EmpleadoModel.findOne({legajo:legajo});
+            const empleado=await EmpleadoModel.find({legajo:legajo});
             return empleado
         }catch(e){
             console.log("Error de repositorio")

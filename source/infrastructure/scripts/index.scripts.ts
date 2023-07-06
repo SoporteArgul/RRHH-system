@@ -3,10 +3,8 @@ import calculo_diario from  "./utils/calculo.diario.script"
 import generacion_calendario from "./utils/generacion.calendario";
 import calculo_mensual from "./utils/calculo.mensual.script"
 import cambio_turno from "./utils/actualizar.turno"
-import prueba from "./utils/prueba";
-import generacion_liquidacion from "./utils/generacion.liquidacion";
-import prueba2 from "./utils/prueba2"
-import generacionCalendarioId from "./utils/generacion.calendario.id";
+
+
 
 const tareas=async()=>{
 
@@ -26,14 +24,16 @@ const cambioTurno= async ()=>{
   await cambio_turno();
 };
 
+
+
 // Configurar los crones para las tareas
 cron.schedule("0 10 * * *", tareaCalculoDiario);
 cron.schedule("0 0 1 12 *", tareaGeneracionCalendario);
 cron.schedule("0 7 1 * *",calculoMensual);
 cron.schedule("0 7 16 * *",calculoMensual);
-cron.schedule("0 0 * * 6",cambioTurno);
+cron.schedule('0 10 * * 0',cambioTurno);
 
-
+// prueba()
 
 }
 

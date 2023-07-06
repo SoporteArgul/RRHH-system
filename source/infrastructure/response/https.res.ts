@@ -6,6 +6,7 @@ export enum HttpStatus {
   UNAUTHORIZED = 401,
   FORBIDDEN = 403,
   INTERNAL_SERVER_ERROR = 500,
+  BAD_REQUEST=400,
 }
 
 export class HttpResponse {
@@ -42,6 +43,14 @@ export class HttpResponse {
       status: HttpStatus.FORBIDDEN,
       statusMsg: "Forbidden",
       error: data,
+    });
+  }
+
+  Error2(res: Response, data?: any): Response {
+    return res.status(HttpStatus.BAD_REQUEST).json({
+      status: HttpStatus.BAD_REQUEST,
+      statusMsg: "Cantidad maxima de fichadas",
+      data: data,
     });
   }
 

@@ -4,7 +4,8 @@ import upload from '../storage/multer';
 import { EmpleadoUseCase } from './../../aplication/empleadoUseCase';
 import { NextFunction, Request,Response } from 'express';
 import { HttpResponse } from '../response/https.res';
-
+import { Storage,GetSignedUrlConfig } from '@google-cloud/storage';
+import { uuid } from 'uuidv4';
 export class EmpleadoController {
   //CONTROLADORES PARA FUNCIONALIDADES USUARIOS
   constructor(private readonly userUseCase: EmpleadoUseCase,
@@ -35,7 +36,27 @@ export class EmpleadoController {
   public insertCtrl= async(req: Request, res: Response):Promise<any>=> {
     try{
       let body=req.body;
-      const imagePath=req.file?.path||"";
+      let url;
+      if(req.file){
+        let projectId: string = process.env.GCP_PROJECT_ID || "";
+        let keyFilename: string = "myKey.json" || "";
+        const storage = new Storage({
+          projectId,
+          keyFilename
+        });
+        const bucket=storage.bucket(process.env.GCP_ID||"")
+        const blob=bucket.file(`${uuid()}.jpg`);
+        const blobStream=blob.createWriteStream();
+        blobStream.on("finish",()=>{return "succcess"})
+        const config:GetSignedUrlConfig = {
+          action: 'read',
+          expires: '03-01-2099' 
+        };
+        url = await blob.getSignedUrl(config);
+        blobStream.end(req.file.buffer) 
+      }
+      let imagePath="";
+      if (url)imagePath=url[0]||"";
       const data=await this.userUseCase.registerUser(imagePath,body);
       if (!data)return this.httpsResponse.Error(res,"No existe el dato!");
       return this.httpsResponse.Ok(res,data);
@@ -60,7 +81,8 @@ export class EmpleadoController {
     try {
         const name = req.params.name;
         const data=await this.userUseCase.clockingUser(name)
-        if (!data)return this.httpsResponse.Error(res,`No se pudo realizar la fichada,\nconsulte con su supervisor o RRHH.`);
+        if(Object.keys(data).length==1)return this.httpsResponse.Error2(res,data)
+        if (!data)return this.httpsResponse.Error(res,`No se pudo realizar la fichada,consulte con su supervisor o RRHH.`);
         return this.httpsResponse.Ok(res,data);
       } catch (e) {
         return this.httpsResponse.Error(res,`No se pudo realizar la fichada,\nconsulte con su supervisor o RRHH.`);
@@ -105,7 +127,27 @@ export class EmpleadoController {
   //Actualizar cualquier dato del empleado
   public update=async(req:Request,res:Response):Promise<any>=>{
     try{
-      let imagePath=req.file?.path||"";
+      let url;
+      if(req.file){
+        let projectId: string = process.env.GCP_PROJECT_ID || "";
+        let keyFilename: string = "myKey.json" || "";
+        const storage = new Storage({
+          projectId,
+          keyFilename
+        });
+        const bucket=storage.bucket(process.env.GCP_ID||"")
+        const blob=bucket.file(`${uuid()}.jpg`);
+        const blobStream=blob.createWriteStream();
+        blobStream.on("finish",()=>{return "succcess"})
+        const config:GetSignedUrlConfig = {
+          action: 'read',
+          expires: '03-01-2099' 
+        };
+        url = await blob.getSignedUrl(config);
+        blobStream.end(req.file.buffer) 
+      }
+      let imagePath="";
+      if (url)imagePath=url[0]||"";
       const legajo=req.params.name;
       const body=req.body;
       const data=await this.userUseCase.updateUser(legajo,imagePath,body);
@@ -120,7 +162,7 @@ export class EmpleadoController {
     try{
       const legajo=req.params.name;
       const dia=req.body;
-      const data=await this.userUseCase.searchDayAndUpdate(legajo,dia[0])
+      const data=await this.userUseCase.searchDayAndUpdate(legajo,dia)
       if (!data)return this.httpsResponse.Error(res,"No se pudo actualizar el empleado!");
       return this.httpsResponse.Ok(res,data);
     }catch(e){
@@ -202,6 +244,28 @@ export class EmpleadoController {
       const body=req.body;
       const data=await this.userUseCase.report()
       if(!data)return this.httpsResponse.Error(res,"No se pudo realizar el reporte");
+      return this.httpsResponse.Ok(res,data);
+    }catch(e){
+      return this.httpsResponse.Error(res,"Error interno del servidor!");
+    }
+  }
+  public CargarTurnoLegajo=async(req:Request,res:Response)=>{
+    try{
+      const {turno,fecha_inicial,fecha_final}=req.body;
+      const legajo=req.params.name;
+      const data=await this.userUseCase.CargarTurnoLegajo(legajo,turno,fecha_inicial,fecha_final);
+      if(!data)return this.httpsResponse.Error(res,"No se pudo realizar la carga del turno");
+      return this.httpsResponse.Ok(res,data);
+    }catch(e){
+      return this.httpsResponse.Error(res,"Error interno del servidor!");
+    }
+  }
+  public CargarTurnoGrupo=async(req:Request,res:Response)=>{
+    try{
+      const {turno,fecha_inicial,fecha_final}=req.body;
+      const grupo=req.params.name
+      const data=await this.userUseCase.CargarTurnoGrupo(grupo,turno,fecha_inicial,fecha_final);
+      if(!data)return this.httpsResponse.Error(res,"No se pudo realizar la carga del turno");
       return this.httpsResponse.Ok(res,data);
     }catch(e){
       return this.httpsResponse.Error(res,"Error interno del servidor!");

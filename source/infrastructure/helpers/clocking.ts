@@ -37,7 +37,7 @@ export class Clock{
                 const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
                 return resultado;
             };
-            if(entrada&&salida==null&&(Math.abs(moment(entrada).diff(moment(horaActual),'minutes'))>=8)){
+            if(entrada&&salida==null&&(Math.abs(moment(entrada).diff(moment(horaActual),'minutes'))>=480)){
                 jornada.salida=horaActual;
                 const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
                 return resultado;
@@ -54,7 +54,8 @@ export class Clock{
             let entrada_descanso=jornada.entrada_descanso;
             let salida_descanso=jornada.salida_descanso;
             let diferencia_e=Math.abs(moment(entrada).diff(moment(horaActual),'minutes'))>2
-            if (entrada && salida==null && entrada_descanso==null && salida_descanso==null&&diferencia_e&& !(Math.abs(moment(entrada).diff(moment(horaActual),'minutes'))>=8)){
+
+            if (entrada && salida==null && entrada_descanso==null && salida_descanso==null&&diferencia_e&& !(Math.abs(moment(entrada).diff(moment(horaActual),'minutes'))>=480)){
                 jornada.entrada_descanso=horaActual;
                 const msg="Entrada al descanso registrado con exito!";
                 const resultado=await this.empleado.saveChangesJornada(empleado,jornada,msg);
@@ -115,7 +116,7 @@ export class Clock{
     public async existe(empleado:any,jornada:any,fechaActual:Date):Promise<any>{
         try{
             if (jornada.entrada&&jornada.entrada_descanso&&jornada.salida_descanso&&jornada.salida)
-            return `Ya se registraron todas sus entradas para el dia de ${fechaActual }`
+            return {mensaje:`Ya se registraron todas sus entradas para el dia ${moment(fechaActual).format("DD-MM-YYYY")}`}
         }catch(e){
             return 'error';
         }

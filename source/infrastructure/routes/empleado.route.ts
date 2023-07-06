@@ -5,6 +5,7 @@ import { MongoRepository } from "../repository/empleado.repository.mongo";
 import upload from "../storage/multer"
 import checkAuth from '../middlewares/verify.token';
 import { Clock } from '../helpers/clocking';
+import { check } from 'express-validator';
 
 
 
@@ -17,7 +18,7 @@ const api=`/api/v1/rrhh/empleados`
 
 
 //POST
-route.post(`${api}/registrar`,upload.single("image"),checkAuth,empleadoCtrl.insertCtrl);
+route.post(`${api}/registrar`,checkAuth,upload.single("image"),empleadoCtrl.insertCtrl);
 route.post(`${api}/dias-area/:area`,empleadoCtrl.ListarDesdeHastaCtrl);
 
 //GET
@@ -33,8 +34,10 @@ route.get(`${api}/area/:area`,checkAuth,empleadoCtrl.ListarPorAreaCrtl);
 //PUT
 route.put(`${api}/fichar/:name`,empleadoCtrl.clockingCtrl);
 route.put(`${api}/cargar/:name`,checkAuth,empleadoCtrl.uploadHoursCtrl);
-route.put(`${api}/actualizar/:name`,upload.single("image"),checkAuth,empleadoCtrl.update);
+route.put(`${api}/actualizar/:name`,checkAuth,upload.single("image"),empleadoCtrl.update);
 route.put(`${api}/habilitar/:name`,checkAuth,empleadoCtrl.searchDayAndUpdate);
+route.put(`${api}/turno-legajo/:name`,checkAuth,empleadoCtrl.CargarTurnoLegajo);
+route.put(`${api}/turno-grupo/:name`,checkAuth,empleadoCtrl.CargarTurnoGrupo);
 //DELETE
 route.delete(`${api}/eliminar/:id`,checkAuth,empleadoCtrl.EliminarCtrl)
 export default route

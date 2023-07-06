@@ -14,6 +14,8 @@ import fs from "node:fs"
 import https from "https"
 import { IncomingMessage, ServerResponse } from 'http';
 import { Application } from 'express-serve-static-core';
+import http from "http"
+
 
 
 const limiter = rateLimit({
@@ -44,13 +46,8 @@ class APP{
         //scripts y db
         tareas().then();  
         dbInit().then();
-        //server
-        const options:ServerOptions={
-          key:fs.readFileSync("./key-rsa.pem"),
-          cert:fs.readFileSync("./cert.pem")
-        }
-        const server=https.createServer(options,app);
-        server.listen(port)
+        // const server=http.createServer(app);
+        app.listen(port)
         console.log(`API lista!\nURL:${process.env.APP_HOST}${port}`)
       }catch(e){
           console.log(e)
