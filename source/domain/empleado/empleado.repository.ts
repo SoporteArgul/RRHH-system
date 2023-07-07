@@ -16,6 +16,7 @@ export interface EmpleadoRepository{
     report():Promise<any>;
     findByLegajo(legajo:string):Promise<any>;
     findByLegajo2(legajo:string):Promise<any>;
+    findJornada(legajo:string):Promise<any>;
     lastClock(ayer:Date,hoy:Date):Promise<any>;
     //DELETE
     deleteUser(id:string):Promise<any>;

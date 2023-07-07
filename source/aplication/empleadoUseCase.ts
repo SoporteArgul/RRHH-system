@@ -74,8 +74,9 @@ export class EmpleadoUseCase{
     //FICHADA USUARIO
     public clockingUser=async(empleadoId:string)=>{
         try{
-            const empleado=await this.empleadoRepository.findByLegajo(empleadoId);
+            const empleado=await this.empleadoRepository.findJornada(empleadoId);
             const fechaActual=moment().format("YYYY-MM-DD").toString();
+            console.log(empleado.jornada)
             const jornada=buscarFecha(empleado.jornada,fechaActual)
             const hora=new Date().toLocaleTimeString('es-AR', { hour12: false });
             const horaActual=moment(hora, 'LTS').toDate();
@@ -104,7 +105,7 @@ export class EmpleadoUseCase{
             //jornadas y horas extras que no se hayan cargado
             const e=moment(data[2]).toDate()
             const s=moment(data[3]).toDate()
-            const empleado=await this.empleadoRepository.findByLegajo(id)
+            const empleado=await this.empleadoRepository.findJornada(id)
             let jornadas=null
             //verificamos que exista empleado y que estemos recibiendo la data a actualizar
             if (empleado && data){
@@ -159,7 +160,7 @@ export class EmpleadoUseCase{
     public searchDayAndUpdate=async(legajo:string,array:any)=>{
         try{
 
-            const empleado=await this.empleadoRepository.findByLegajo(legajo);
+            const empleado=await this.empleadoRepository.findJornada(legajo);
             const jornada=buscarFecha(empleado.jornada,array[0]);
             if (jornada){
                 if (array[1]==true)jornada.habilitado_horas_extra=true;
@@ -187,7 +188,7 @@ export class EmpleadoUseCase{
     //Traer por legajo pero en info reducida
     public getByLegajo=async(legajo:string)=>{
         try{
-            const empleado=await this.empleadoRepository.findByLegajo(legajo);
+            const empleado=await this.empleadoRepository.findByLegajo2(legajo);
             if(empleado)return empleado;
         }catch{
             return ERROR;
