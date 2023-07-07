@@ -87,6 +87,50 @@ export class MongoRepository implements EmpleadoRepository{
             throw Error("Error de repositorio")
         }
     }
+    async listByAreaAndGroup(area: string, group: string, ayer: Date, hoy: Date): Promise<any> {
+        try{
+            const data = await EmpleadoModel.aggregate([
+                { $unwind: "$jornada" },
+                { $unwind: "$jornada" },
+                { $unwind: "$jornada" },
+                { $match: { area:area} },
+                { $match: { grupo:group} },
+                { $match: { "jornada.fecha": { $gte: new Date(ayer), $lte: hoy } } },
+                {
+                    $group: {
+                        _id: "$_id",
+                        nombre: { $first: "$nombre" },
+                        apellido: { $first: "$apellido" },
+                        legajo: { $first: "$legajo" },
+                        area:{$first:"$area"},
+                        grupo:{$first:"$grupo"},
+                        jornada: { $push: "$jornada" },
+                        turno:{ $first:"$turno"},
+                        foto:{ $first:"$foto"}
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        nombre: 1,
+                        apellido: 1,
+                        legajo: 1,
+                        area:1,
+                        grupo:1,
+                        jornada: 1,
+                        turno:1,
+                        foto:1
+                    }
+                },
+                { 
+                    $sort: { apellido: 1, turno:1 } 
+                }
+            ]);
+            return data
+        }catch(e){
+            throw Error("Error de repositorio")
+        }
+    }
     async listByRotation(turno:string): Promise<any> {
         try{
             const data=await EmpleadoModel.find({turno:turno})

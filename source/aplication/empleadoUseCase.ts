@@ -235,6 +235,17 @@ export class EmpleadoUseCase{
             return ERROR;
         }
     }
+        //Buscar por sector
+        public areaygrupo=async(area:string,group:string)=>{
+            try{
+                const ayer=moment().subtract(1, 'day').toDate();
+                const hoy=moment().toDate();
+                const data=await this.empleadoRepository.listByAreaAndGroup(area,group,ayer,hoy);
+                return data;
+            }catch(e){
+                return ERROR;
+            }
+        }
     public desdeHasta=async(area:string,body:Array<Date>)=>{
         try{
             if(body[0]&&body[1]){

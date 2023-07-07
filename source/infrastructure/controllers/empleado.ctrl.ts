@@ -220,6 +220,7 @@ export class EmpleadoController {
     }catch(e){
       return this.httpsResponse.Error(res,"Error interno del servidor!");
     }}
+  
   public ListarPorAreaCrtl=async(req:Request,res:Response)=>{
     try{
       const area=req.params.area;
@@ -229,6 +230,16 @@ export class EmpleadoController {
     }catch(e){
       return this.httpsResponse.Error(res,"Error interno del servidor!");
     }};
+    public ListarPorAreayGrupoCrtl=async(req:Request,res:Response)=>{
+      try{
+        const area=req.query.area as string;
+        const grupo=req.query.grupo as string;
+        const data=await this.userUseCase.areaygrupo(area,grupo);
+        if(!data)return this.httpsResponse.Error(res,"No se pudo listar por area");
+        return this.httpsResponse.Ok(res,data);
+      }catch(e){
+        return this.httpsResponse.Error(res,"Error interno del servidor!");
+      }};
   public ListarDesdeHastaCtrl=async(req:Request,res:Response)=>{
     try{
       const area=req.params.area;
