@@ -1,5 +1,10 @@
+import EmpleadoModel from "../../model/empleado.model"
 
-      
+
+export default async()=>{
+    const empleado=await EmpleadoModel.updateMany({}, { $rename: { 'calle': 'calle ' } })
+    console.log(empleado)
+}   
 
 
 

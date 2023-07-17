@@ -54,145 +54,249 @@ const EmpleadoSchema = new Schema({
     legajo: {
         type: String,
         minlength: 2,
-        maxLengh: 10,
-        unique: true
+        maxLength: 10,
+        unique: true,
+        required:true
     },
     apellido: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     nombre: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     cuil: {
         type: String,
-        unique: true
+        unique: true,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     contratacion: {
         type: String,
-        // enum: {
-        //     values: ["eventual", "agencia", "efectivo", "externo"],
-        //     message: MENSAJE
-        // }
+        enum: {
+            values: ["eventual", "agencia", "efectivo", "externo"],
+            message: MENSAJE
+        },
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     fecha_ingreso: {
         type: Date,
-        default: new Date()
+        default: new Date(),
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     gerencia: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
+        
     },
     area: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
+        
     },
     sector: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
+        
     },
     centro_de_costo: {
-        type: String || null
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     convenio: {
         type: String,
-        // enum: {
-        //     values: ["plastico", "fuera de convenio"],
-        //     message: MENSAJE
-        // }
+        enum: {
+            values: ["plastico", "fuera de convenio"],
+            message: MENSAJE
+        },
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     categoria: {
-        type: String || null,
-        // enum: {
-        //     values: ["operario", "auxiliar", "operador", "operador oalificado", "operador especializado", "oficial especializado","medio oficial mantenimiento", "oficial de mantenimiento","nivel 1", "nivel 2", "nivel 3", "nivel 4", "nivel 5", "capataz", "ayudante de chofer", "conductor de autoelevador","proveedor",null],
-        //     message: MENSAJE
-        // },
-        default: null
+        type: String,
+        enum: {
+            values: ["operario", "auxiliar", "operador", "operador calificado", "operador especializado", "oficial especializado","medio oficial mantenimiento", "oficial de mantenimiento","administrativo nivel 1", "administrativo nivel 2", "administrativo nivel 3", "administrativo nivel 4", "administrativo nivel 5", "capataz", "ayudante de chofer", "conductor de autoelevador","proveedor",null],
+            message: MENSAJE
+        },
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     dni: {
         type: String,
-        unique: true
+        unique: true,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     fecha_nacimiento: {
-        type: Date || null
+        type: Date,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     sexo: {
         type: String,
-        // enum: {
-        //     values: ["H", "M", "O"],
-        //     message: MENSAJE
-        // }
+        enum: {
+            values: ["hombre", "mujer", "otro"],
+            message: MENSAJE
+        },
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     email: {
-        type: String || null,
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true,
+
 
     },
     telefono: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     telefono_urgencias: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     pais: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     provincia: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     localidad: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     calle: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     numero: {
         type: String,
-        require: false
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     dpto: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     piso: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     codigo_postal: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
 
     nivel_de_educacion: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        enum:{
+            values:["primario","secundario","terciario","universitario"],
+            message:MENSAJE
+        },
+        required:true
     },
     activo: {
-        type: Boolean
+        type: Boolean,
+        default:true,
+        required:true
     },
 
     fecha_egreso: {
         type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
 
     },
     estado_ambiental: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     examen_preocupacional: {
-        type: String
+        type: String,
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     tipo_liquidacion: {
         type: String,
-        // enum: {
-        //     values: ["Jornal", "Mensual"],
-        //     message: MENSAJE
-        // }
+        enum: {
+            values: ["jornal", "mensual","jornal nacion","mensual nacion"],
+            message: MENSAJE
+        },
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     rotacion: {
         type: String,
-        // enum: {
-        //     values: ["Fijo", "6x1"],
-        //     message: MENSAJE
-        // }
+        enum: {
+            values: ["fijo", "6x1"],
+            message: MENSAJE
+        },
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     grupo: {
         type: String,
-        // enum: {
-        //     values: ["A", "B", "C"],
-        //     message: MENSAJE,
-        // },
-        default: "A"
+        enum: {
+            values: ["a", "b", "c","-"],
+            message: MENSAJE,
+        },
+        minlength:1,
+        maxlength:100,
+        required:true
     },
     jornada: [[[{
         fecha: {
@@ -208,27 +312,51 @@ const EmpleadoSchema = new Schema({
         },
         licencia: {
             type: String,
-            // emun:{
-            //     values:["gremial","art","enfermedad","vacaciones","maternidad","mudanza",
-            //             "nacimiento","examen","fallecimiento familiar","matrimonio","donacion sangre",
-            //             "aislamiento","vacunacion COVID-19","enfermedad justificada","ausente con aviso",
-            //             "ausente sin aviso","suspension","reserva legal de puesto"],
-            //     message:MENSAJE
-            // }
+            emun:{
+                values:[
+                    "enfermedad diurna",
+                    "enfermedad nocturna",
+                    "enfermedad diurna/nocturna",
+                    "licencia gremial",
+                    "diurna feriado ley",
+                    "nocturna feriado ley",
+                    "diurna/nocturna feriado ley",
+                    "accidente",
+                    "vacaciones",
+                    "maternidad",
+                    "mudanza",
+                    "nacimiento",
+                    "ausente con aviso",
+                    "ausente sin aviso",
+                    "examen",
+                    "suspension",
+                    "fallecimiento",
+                    "matrimonio",
+                    "donacion de sangre",
+                    "ausencia enfermedad injustificada",
+                    "diurna reserva legal de puesto",
+                    "nocturna reserva legal puesto",
+                    "diurna/nocturna reserva legal puesto",
+                    "aislamiento COVID",
+                    "licencia vacunacion"
+                  ],
+                message:MENSAJE
+            }
         },
         turno: {
             type: String,
             enum: {
                 values: ["mañana", "tarde", "noche", "-", ""],
                 message: MENSAJE
-            }
+            },
+            default:"-"
         },
         entrada: {
             type: Date || null,
             default: null
         },
         salida: {
-            type: Date || null || String,
+            type: Date || null,
             default: null
         },
         entrada_descanso: {
@@ -421,23 +549,74 @@ const EmpleadoSchema = new Schema({
             type: Number,
             default: 0
         },
-        total_accidente: { type: Number, default: 0 },
-        total_vacaciones: { type: Number, default: 0 },
-        total_licencia_maternidad: { type: Number, default: 0 },
-        total_licencia_mudanza: { type: Number, default: 0 },
-        total_licencia_nacimiento: { type: Number, default: 0 },
-        total_ausente_con_aviso: { type: Number, default: 0 },
-        total_ausente_sin_aviso: { type: Number, default: 0 },
-        total_licencia_examen: { type: Number, default: 0 },
-        total_suspension: { type: Number, default: 0 },
-        total_licencia_fallecimiento: { type: Number, default: 0 },
-        total_licencia_matrimonio: { type: Number, default: 0 },
-        total_licencia_donacion_sangre: { type: Number, default: 0 },
-        total_ausencia_enfermadad_injustificada: { type: Number, default: 0 },
-        total_diurna_reserva_legal_puesto: { type: Number, default: 0 },
-        total_nocturna_reserva_legal_puesto: { type: Number, default: 0 },
-        total_licencia_aislamiento: { type: Number, default: 0 },
-        total_licencia_vacunacion: { type: Number, default: 0 },
+        total_accidente: {
+            type: Number,
+            default: 0
+        },
+        total_vacaciones: {
+            type: Number,
+            default: 0
+        },
+        total_licencia_maternidad: {
+            type: Number,
+            default: 0
+        },
+        total_licencia_mudanza: {
+            type: Number,
+            default: 0
+        },
+        total_licencia_nacimiento: {
+            type: Number,
+            default: 0
+        },
+        total_ausente_con_aviso: {
+            type: Number,
+            default: 0
+        },
+        total_ausente_sin_aviso: {
+            type: Number,
+            default: 0
+        },
+        total_licencia_examen: {
+            type: Number,
+            default: 0
+        },
+        total_suspension: {
+            type: Number,
+            default: 0
+        },
+        total_licencia_fallecimiento: {
+            type: Number,
+            default: 0
+        },
+        total_licencia_matrimonio: {
+            type: Number,
+            default: 0
+        },
+        total_licencia_donacion_sangre: {
+            type: Number,
+            default: 0
+        },
+        total_ausencia_enfermadad_injustificada: {
+            type: Number,
+            default: 0
+        },
+        total_diurna_reserva_legal_puesto: {
+            type: Number,
+            default: 0
+        },
+        total_nocturna_reserva_legal_puesto: {
+            type: Number,
+            default: 0
+        },
+        total_licencia_aislamiento: {
+            type: Number,
+            default: 0
+        },
+        total_licencia_vacunacion: {
+            type: Number,
+            default: 0
+        },
     }]]],
     observaciones: {
         type: String,
