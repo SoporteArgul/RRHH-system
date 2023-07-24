@@ -2,3 +2,5 @@ package-lock.json
 .env
 .env.example
 node_modules
+dist
+myKey.json

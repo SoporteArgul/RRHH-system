@@ -7,6 +7,6 @@ COPY . .
 RUN npm install 
 ENV NODE_ENV=production
 EXPOSE 5005
-CMD ["npm","start","app.ts"]
+CMD ["npm","run","start:prod"]
 
 
